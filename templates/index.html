@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Fantasy Premier League</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Saját CSS -->
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='styles.css') }}"
+>
+</head>
+
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-trophy-fill me-2"></i>
+                Fantasy Premier League
+            </a>
+
+            <span class="navbar-text text-white-50">
+                Fantasy Premier League Statistics
+            </span>
+
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="badge season-badge mb-3">
+                        2026 / 27 SEASON
+                    </span>
+                    <h1 class="display-4 fw-bold">
+                        Padon hagyott pontok bajnokai
+                    </h1>
+                    <p class="lead text-white-50">
+                        Kövesd a ligánk ranglistáját, Gameweek eredményeit
+                        és a legfontosabb statisztikákat.
+                    </p>
+                </div>
+                <div class="col-lg-5">
+                    <div class="stats-card">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number" id="playerCount">
+                                    -
+                                </div>
+                                <div class="stat-label">
+                                    Játékos
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number" id="currentGW">
+                                    -
+                                </div>
+                                <div class="stat-label">
+                                    Aktuális GW
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number">
+                                    <i class="bi bi-fire"></i>
+                                </div>
+                                <div class="stat-label">
+                                    Liga
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+
+    <main class="container py-5">
+        <!-- CONTROLS -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">
+                    <i class="bi bi-calendar-week me-2"></i>
+                    Gameweek
+                </label>
+                <select class="form-select custom-select" id="gwSelect">
+                </select>
+
+            </div>
+
+
+            <div class="col-md-6 mb-3">
+
+    <label class="form-label">
+        <i class="bi bi-person-fill me-2"></i>
+        Játékos
+    </label>
+
+    <select class="form-select custom-select" id="playerSelect">
+        <option value="all">Összes játékos</option>
+    </select>
+
+</div>
+
+        </div>
+
+
+        <!-- PODIUM -->
+
+        <div class="row mb-5" id="podiumContainer">
+
+            <!-- JavaScript tölti -->
+
+        </div>
+
+
+        <!-- TABLE CARD -->
+
+        <div class="table-card">
+
+            <div class="table-header">
+
+                <div>
+
+                    <h3>
+                        <i class="bi bi-bar-chart-fill me-2"></i>
+                        Ranglista
+                    </h3>
+
+                    <p id="tableSubtitle">
+                        Aktuális állás
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table custom-table align-middle">
+
+                    <thead>
+    <tr>
+        <th>Helyezés</th>
+        <th>Játékos</th>
+        <th>GW helyezés</th>
+        <th>GW pont</th>
+        <th>Összpont</th>
+        <th>Átlag GW pont</th>
+        <th>Max GW pont</th>
+        <th>Min GW pont</th>
+        <th>GW győzelem</th>
+        <th>GW Top 3</th>
+        <th>Kapitány pont</th>
+        <th>Kapitány %</th>
+        <th>Transzferek</th>
+        <th>Transzfer előny</th>
+        <th>Padon hagyott pont</th>
+        <th>Összes padon hagyott pont</th>
+        <th>Átlag padpont</th>
+        <th>GW pad helyezés</th>
+    </tr>
+</thead>
+
+
+                    <tbody id="tableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="text-center mt-5 mb-4">
+
+            <p class="text-secondary mb-0">
+
+                <i class="bi bi-trophy me-1"></i>
+
+                Fantasy Premier League Dashboard
+
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- Bootstrap JS -->
+
+<script>
+    const allDataFromFlask = {{ data | tojson }};
+</script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
