@@ -3,9 +3,36 @@
 ========================= */
 
 body {
-    background: #f4f6f9;
     font-family: Arial, sans-serif;
     color: #1f2937;
+
+    background: linear-gradient(
+        115deg,
+        #ccffff 0%,
+        #b3ffff 25%,
+        #42baf4 50%,
+        #638ff7 75%,
+        #9633ff 100%
+    );
+
+    background-size: 200% 200%;
+    animation: page-gradient 20s ease infinite;
+
+    min-height: 100vh;
+}
+
+@keyframes page-gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 
@@ -14,16 +41,11 @@ body {
 ========================= */
 
 .custom-navbar {
-    background: linear-gradient(
-        90deg,
-        #1f2937,
-        #111827
-    );
+    background: transparent;
 
     padding: 18px 0;
 
-    box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 }
 
 
@@ -37,31 +59,20 @@ body {
 ========================= */
 
 .hero-section {
+    background: transparent;
 
-    background:
-        radial-gradient(
-            circle at top right,
-            #00ff87,
-            transparent 30%
-        ),
-        linear-gradient(
-            135deg,
-            #0f172a,
-            #1e293b
-        );
+    color: #37003c;
+    padding: 60px 0;
 
-    color: white;
-
-    padding: 70px 0;
-
+    position: relative;
+    overflow: hidden;
 }
-
 
 .season-badge {
 
-    background: #00ff87;
+    background: #37003c;
 
-    color: #0f172a;
+    color: white;
 
     font-weight: bold;
 
@@ -102,26 +113,15 @@ body {
 
 
 .stat-number {
-
-    font-size: 2rem;
-
-    font-weight: 800;
-
-    color: #00ff87;
-
+    font-size: 3rem;
+    font-weight: 700;
+    color: #37003c;
 }
 
-
 .stat-label {
-
-    font-size: 0.8rem;
-
-    text-transform: uppercase;
-
-    color: #cbd5e1;
-
-    margin-top: 5px;
-
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(55, 0, 60, 0.65);
 }
 
 
@@ -158,79 +158,94 @@ body {
 ========================= */
 
 .podium-card {
-
-    background: white;
+    background: #37003c;
 
     border-radius: 20px;
-
     padding: 30px;
 
     text-align: center;
-
     height: 100%;
 
+    color: white;
+
     box-shadow:
-        0 10px 30px
-        rgba(0, 0, 0, 0.08);
+        0 12px 35px
+        rgba(55, 0, 60, 0.3);
 
     transition:
         transform 0.25s ease,
         box-shadow 0.25s ease;
-
 }
 
 
 .podium-card:hover {
-
-    transform:
-        translateY(-6px);
+    transform: translateY(-6px);
 
     box-shadow:
-        0 20px 40px
-        rgba(0, 0, 0, 0.12);
-
+        0 20px 45px
+        rgba(55, 0, 60, 0.4);
 }
 
+
+/* Érem */
 
 .medal {
-
     font-size: 3rem;
-
     margin-bottom: 10px;
-
 }
 
+
+/* Játékos neve */
+
+.podium-card h3 {
+    color: white;
+}
+
+
+/* Összpont */
 
 .podium-points {
-
     font-size: 2.2rem;
-
     font-weight: 800;
 
-    color: #00a860;
-
+    color: #00ff87;
 }
 
+
+/* ÖSSZES PONT felirat */
 
 .podium-label {
-
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.6);
 
     font-size: 0.85rem;
-
     text-transform: uppercase;
-
 }
 
 
-.podium-card small {
+/* Elválasztó vonal */
 
+.podium-card hr {
+    border-color: rgba(255, 255, 255, 0.2);
+    opacity: 1;
+}
+
+
+/* Alsó értékek */
+
+.podium-card strong {
+    color: white;
+    font-size: 1.05rem;
+}
+
+
+/* GW pont / Átlagpont */
+
+.podium-card small {
     display: block;
 
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.6);
 
     margin-top: 4px;
-
 }
 
 
@@ -238,107 +253,188 @@ body {
    TABLE
 ========================= */
 
-.table-card {
+.table-scroll-top {
+    overflow-x: auto;
+    overflow-y: hidden;
 
-    background: white;
+    width: 100%;
+
+    background: #37003c;
+
+    padding: 3px 8px;
+
+    margin-bottom: 0;
+}
+
+.table-scroll-top-inner {
+    height: 1px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+
+    background: #37003c;
+
+    padding-bottom: 4px;
+}
+
+.table-card {
+    background: #37003c;
 
     border-radius: 20px;
-
     overflow: hidden;
 
     box-shadow:
-        0 10px 30px
-        rgba(0, 0, 0, 0.07);
+        0 12px 35px
+        rgba(55, 0, 60, 0.3);
 
+    color: white;
 }
 
 
 .table-header {
-
     padding: 25px 30px;
 
-    border-bottom:
-        1px solid #e5e7eb;
+    background: #37003c;
 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+.table-filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.table-filter {
+    min-width: 190px;
+}
+
+.table-filter label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    color: rgba(255, 255, 255, 0.7);
+
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.table-filter .form-select {
+    min-width: 190px;
+
+    background-color: #240029;
+    color: white;
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 10px;
+}
+
+.table-filter .form-select:focus {
+    border-color: #00ff87;
+
+    box-shadow:
+        0 0 0 0.2rem
+        rgba(0, 255, 135, 0.15);
 }
 
 
 .table-header h3 {
-
     margin-bottom: 5px;
 
     font-weight: 700;
 
+    color: white;
 }
 
 
 .table-header p {
-
     margin: 0;
 
-    color: #9ca3af;
-
+    color: rgba(255, 255, 255, 0.65);
 }
 
 
 .custom-table {
-
     margin: 0;
-
+    width: max-content;
+    min-width: 100%;
 }
 
-
 .custom-table thead {
+    background: #240029;
+    color: white;
+}
 
-    background:
-        linear-gradient(
-            90deg,
-            #111827,
-            #1f2937
-        );
+.custom-table th {
+    padding: 14px 18px;
+
+    background: #240029;
+
+    color: rgba(255, 255, 255, 0.85);
+
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    line-height: 1.25;
+
+    border-color:
+        rgba(255, 255, 255, 0.08);
+}
+
+.custom-table td {
+    padding: 18px;
+
+    background: #37003c;
 
     color: white;
 
+    border-color:
+        rgba(255, 255, 255, 0.08);
 }
 
+/* Minden oszlop középre */
 
-.custom-table th {
-
-    padding: 18px;
-
-    font-size: 0.75rem;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
-
-    white-space: nowrap;
-
-}
-
-
+.custom-table th,
 .custom-table td {
-
-    padding: 18px;
-
-    border-color: #f1f1f1;
-
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
 }
 
+/* Játékos oszlop balra */
+
+.custom-table th:nth-child(2) {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+
+    background: #3d0a44;
+
+    color: white;
+
+    box-shadow:
+        4px 0 8px rgba(0, 0, 0, 0.25);
+}
 
 .custom-table tbody tr {
-
-    transition:
-        background 0.2s ease;
-
+    transition: background 0.2s ease;
 }
 
-
-.custom-table tbody tr:hover {
-
-    background:
-        #f8fafc;
-
+.custom-table tbody tr:hover td {
+    background: #4a0750;
 }
 
 
@@ -347,23 +443,21 @@ body {
 ========================= */
 
 .ranking-badge {
-
     width: 34px;
-
     height: 34px;
 
     display: inline-flex;
 
     justify-content: center;
-
     align-items: center;
 
     border-radius: 50%;
 
-    background: #f3f4f6;
+    background: #52005d;
+
+    color: white;
 
     font-weight: 700;
-
 }
 
 
@@ -392,6 +486,20 @@ body {
 
 }
 
+/* TABLE ALIGNMENT */
+
+.custom-table th,
+.custom-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Játékos oszlop maradjon balra igazítva */
+
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) {
+    text-align: left;
+}
 
 /* =========================
    PLAYER
@@ -402,13 +510,10 @@ body {
 }
 
 .total-points {
-
     font-size: 1.1rem;
-
     font-weight: 800;
 
-    color: #00a860;
-
+    color: #00ff87;
 }
 
 
@@ -418,6 +523,24 @@ body {
 
 @media (max-width: 768px) {
 
+
+.table-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-filter {
+        width: 100%;
+    }
+
+    .table-filter .form-select {
+        width: 100%;
+    }
     .hero-section {
 
         padding: 45px 0;
@@ -441,10 +564,249 @@ body {
 }
 
 .custom-table {
-    min-width: 2200px;
+    width: max-content;
+    min-width: 100%;
 }
 
 .custom-table th,
 .custom-table td {
     white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* CLICKABLE PLAYER NAME */
+
+.player-link {
+    border: none;
+    background: transparent;
+    padding: 0;
+
+    font: inherit;
+    font-weight: 600;
+
+    color: white;
+
+    cursor: pointer;
+}
+
+.player-link:hover {
+    color: #00ff87;
+    text-decoration: underline;
+}
+
+
+/* TEAM MODAL */
+
+.team-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #9ca3af;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.team-list {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.team-player {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.team-player:last-child {
+    border-bottom: none;
+}
+
+.position-badge {
+    display: inline-block;
+    width: 45px;
+    margin-right: 10px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* POSITION COLORS */
+
+.position-gk {
+    background-color: #ff9800;
+    color: #212529;
+}
+
+.position-def {
+    background-color: #009900;
+    color: #212529;
+}
+
+.position-mid {
+    background-color: #81d4fa;
+    color: #212529;
+}
+
+.position-fwd {
+    background-color: #f44336;
+    color: white;
+}
+
+.fpl-player-link {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+}
+
+.fpl-player-link:hover {
+    text-decoration: underline;
+    color: #00a860;
+}
+
+
+.owner-list {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+
+.owner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 16px;
+
+    border-bottom: 1px solid #f1f1f1;
+}
+
+
+.owner-row:last-child {
+    border-bottom: none;
+}
+
+.owner-manager-link {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+}
+
+.owner-manager-link:hover {
+    color: #00a860;
+    text-decoration: underline;
+}
+
+/* =========================
+   FANCY TABLE SCROLLBAR
+========================= */
+
+/* Firefox */
+
+.table-scroll-top,
+.table-responsive {
+    scrollbar-color: #8b5cf6 #240029;
+}
+
+
+/* Chrome / Edge / Safari */
+
+.table-scroll-top::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar {
+    height: 30px;
+}
+
+
+/* Sín */
+
+.table-scroll-top::-webkit-scrollbar-track,
+.table-responsive::-webkit-scrollbar-track {
+    background: #240029;
+    border-radius: 20px;
+}
+
+
+/* Csúszka */
+
+.table-scroll-top::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        90deg,
+        #6f35ff,
+        #a855f7
+    );
+
+    border-radius: 20px;
+
+    border: 3px solid #240029;
+}
+
+
+/* Hover */
+
+.table-scroll-top::-webkit-scrollbar-thumb:hover,
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        90deg,
+        #8257ff,
+        #c084fc
+    );
+}
+
+/* ÖSSZPONT oszlop */
+
+.custom-table td:nth-child(5) {
+    color: #00ff87;
+    font-weight: 800;
+}
+
+/* =========================
+   STICKY PLAYER COLUMN
+========================= */
+
+/* Játékos fejléc */
+
+.custom-table th:nth-child(2) {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+
+    background: #3d0a44;
+
+    color: white;
+
+    box-shadow:
+        4px 0 8px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Játékos nevek */
+
+.custom-table td:nth-child(2) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+
+    background: #4b1552;
+
+    box-shadow:
+        4px 0 8px rgba(0, 0, 0, 0.22);
+}
+
+
+/* Hover esetén a sticky cella is változzon */
+
+.custom-table tbody tr:hover td:nth-child(2) {
+    background: #62306a;
 }

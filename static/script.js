@@ -33,7 +33,7 @@ function loadData() {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="9" class="text-center text-danger py-5">
+                <td colspan="18" class="text-center text-danger py-5">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     Nem sikerült betölteni az adatokat.
                 </td>
@@ -256,17 +256,17 @@ function renderPodium(data) {
 
                             <div class="col-6">
 
-                                <strong>
-                                    ${formatValue(
-                                        player["Number of GW wins"]
-                                    )}
-                                </strong>
+    <strong>
+        ${formatNumber(
+            player["Average GW points"]
+        )}
+    </strong>
 
-                                <small>
-                                    GW győzelem
-                                </small>
+    <small>
+        Átlagpont
+    </small>
 
-                            </div>
+</div>
 
                         </div>
 
@@ -313,8 +313,15 @@ function renderTable(data) {
                 </td>
 
                 <td class="player-name">
-                    ${player.Name}
-                </td>
+
+    <button
+        class="player-link"
+        data-player="${player.Name}"
+    >
+        ${player.Name}
+    </button>
+
+</td>
 
                 <td>
                     ${formatValue(player["GW ranking"])}
@@ -353,9 +360,9 @@ function renderTable(data) {
                 </td>
 
                 <td>
-                    ${formatValue(
+                    ${formatNumber(
                         player["Captain points/total points [%]"]
-                    )}
+                    )}%
                 </td>
 
                 <td>
@@ -396,8 +403,213 @@ function renderTable(data) {
         `;
 
     }).join("");
+
+addPlayerClickEvents();
+updateTopScrollbar();
 }
 
+
+
+function addPlayerClickEvents() {
+
+    const playerLinks =
+        document.querySelectorAll(".player-link");
+
+    playerLinks.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const playerName =
+                    this.dataset.player;
+
+                showTeam(playerName);
+            }
+        );
+
+    });
+}
+
+async function showTeam(playerName) {
+
+    const gw = Number(gwSelect.value);
+
+    const modalElement =
+        document.getElementById("teamModal");
+
+    const modal =
+        new bootstrap.Modal(modalElement);
+
+    const title =
+        document.getElementById(
+            "teamModalTitle"
+        );
+
+    const loading =
+        document.getElementById(
+            "teamLoading"
+        );
+
+    const content =
+        document.getElementById(
+            "teamContent"
+        );
+
+
+    title.textContent =
+    `${playerName} – Gameweek ${gw}`;
+
+// előző hibaüzenet törlése
+loading.innerHTML = "Csapat betöltése...";
+
+loading.classList.remove("d-none");
+content.classList.add("d-none");
+
+modal.show();
+
+
+    try {
+
+        const response = await fetch(
+            `/api/team/${encodeURIComponent(
+                playerName
+            )}/${gw}`
+        );
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+            throw new Error(
+                data.error ||
+                "Nem sikerült betölteni a csapatot."
+            );
+        }
+
+
+        renderTeam(data);
+
+
+    } catch (error) {
+
+        loading.innerHTML = `
+            <div class="text-danger">
+                ${error.message}
+            </div>
+        `;
+
+    }
+}
+
+function renderTeam(data) {
+
+    const loading =
+        document.getElementById(
+            "teamLoading"
+        );
+
+    const content =
+        document.getElementById(
+            "teamContent"
+        );
+
+
+    const starters =
+        data.team.filter(player =>
+            player.pick_position <= 11
+        );
+
+
+    const bench =
+        data.team.filter(player =>
+            player.pick_position > 11
+        );
+
+
+    content.innerHTML = `
+
+        <div class="mb-4">
+
+            <h6 class="text-secondary">
+                KEZDŐ
+            </h6>
+
+            ${starters.map(player => {
+
+                return createPlayerRow(player);
+
+            }).join("")}
+
+        </div>
+
+
+        <div>
+
+            <h6 class="text-secondary">
+                CSEREPAD
+            </h6>
+
+            ${bench.map(player => {
+
+                return createPlayerRow(player);
+
+            }).join("")}
+
+        </div>
+
+    `;
+
+
+    loading.classList.add("d-none");
+    content.classList.remove("d-none");
+}
+
+function createPlayerRow(player) {
+
+    let captainBadge = "";
+
+    if (player.captain) {
+        captainBadge = `
+            <span class="badge bg-success ms-2">
+                C
+            </span>
+        `;
+    }
+
+    if (player.vice_captain) {
+        captainBadge = `
+            <span class="badge bg-secondary ms-2">
+                VC
+            </span>
+        `;
+    }
+
+    return `
+        <div class="team-player">
+
+            <div>
+                <span class="
+                    position-badge
+                    position-${player.position.toLowerCase()}
+                ">
+                    ${player.position}
+                </span>
+
+                <button
+    class="fpl-player-link"
+    data-player-id="${player.id}"
+    data-player-name="${player.name}"
+>
+    ${player.name}
+</button>
+
+                ${captainBadge}
+            </div>
+
+        </div>
+    `;
+}
 
 // ==============================
 // FORMAT VALUE
@@ -477,6 +689,302 @@ function createPlayerSelect() {
     });
 }
 
+const teamContent =
+    document.getElementById("teamContent");
+
+
+teamContent.addEventListener(
+    "click",
+    function (event) {
+
+        const playerButton =
+            event.target.closest(".fpl-player-link");
+
+        if (!playerButton) {
+            return;
+        }
+
+
+        const playerId =
+            Number(playerButton.dataset.playerId);
+
+        const playerName =
+            playerButton.dataset.playerName;
+
+
+        showPlayerOwners(
+            playerId,
+            playerName
+        );
+    }
+);
+
+async function showPlayerOwners(
+    playerId,
+    playerName
+) {
+
+    const gw = Number(gwSelect.value);
+
+
+    const teamModalElement =
+        document.getElementById("teamModal");
+
+    const teamModal =
+        bootstrap.Modal.getInstance(
+            teamModalElement
+        );
+
+
+    const ownersModalElement =
+        document.getElementById(
+            "playerOwnersModal"
+        );
+
+    const ownersModal =
+        bootstrap.Modal.getOrCreateInstance(
+            ownersModalElement
+        );
+
+
+    const title =
+        document.getElementById(
+            "playerOwnersModalTitle"
+        );
+
+    const loading =
+        document.getElementById(
+            "playerOwnersLoading"
+        );
+
+    const content =
+        document.getElementById(
+            "playerOwnersContent"
+        );
+
+
+    title.textContent =
+        `${playerName} – Gameweek ${gw}`;
+
+
+    loading.innerHTML = `
+        <div
+            class="spinner-border spinner-border-sm me-2"
+            role="status">
+        </div>
+
+        Csapatok betöltése...
+    `;
+
+    loading.classList.remove("d-none");
+
+    content.classList.add("d-none");
+
+
+    // Első modal bezárása
+    if (teamModal) {
+        teamModal.hide();
+    }
+
+
+    // Kis késleltetés, hogy szépen bezáródjon
+    setTimeout(() => {
+        ownersModal.show();
+    }, 200);
+
+
+    try {
+
+        const response = await fetch(
+            `/api/player-owners/${playerId}/${gw}`
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Nem sikerült lekérni a csapatokat."
+            );
+        }
+
+
+        renderPlayerOwners(
+            data,
+            playerName
+        );
+
+
+    } catch (error) {
+
+        loading.innerHTML = `
+            <div class="text-danger">
+                ${error.message}
+            </div>
+        `;
+    }
+}
+
+function renderPlayerOwners(
+    data,
+    playerName
+) {
+
+    const loading =
+        document.getElementById(
+            "playerOwnersLoading"
+        );
+
+    const content =
+        document.getElementById(
+            "playerOwnersContent"
+        );
+
+
+    if (data.owners.length === 0) {
+
+        content.innerHTML = `
+            <div class="text-center text-secondary py-3">
+
+                ${playerName}
+                egyik csapatban sem szerepel
+                ebben a Gameweekben.
+
+            </div>
+        `;
+
+    } else {
+
+        content.innerHTML = `
+
+            <div class="mb-3 text-secondary">
+
+                <strong>
+                    ${data.count}
+                </strong>
+
+                csapatban szerepel
+
+            </div>
+
+
+            <div class="owner-list">
+
+                ${data.owners.map(owner => {
+
+                    let badges = "";
+
+
+                    if (owner.captain) {
+
+                        badges += `
+                            <span
+                                class="badge bg-success ms-2">
+                                C
+                            </span>
+                        `;
+                    }
+
+
+                    if (owner.vice_captain) {
+
+                        badges += `
+                            <span
+                                class="badge bg-secondary ms-2">
+                                VC
+                            </span>
+                        `;
+                    }
+
+
+                    if (!owner.starter) {
+
+                        badges += `
+                            <span
+                                class="badge bg-warning text-dark ms-2">
+                                PAD
+                            </span>
+                        `;
+                    }
+
+
+                    return `
+
+                        <div class="owner-row">
+
+                            <button
+    class="owner-manager-link"
+    data-manager="${owner.manager}"
+>
+    ${owner.manager}
+</button>
+
+                            <div>
+                                ${badges}
+                            </div>
+
+                        </div>
+                    `;
+
+                }).join("")}
+
+            </div>
+        `;
+    }
+
+
+    loading.classList.add("d-none");
+    content.classList.remove("d-none");
+}
+
+const playerOwnersContent =
+    document.getElementById("playerOwnersContent");
+
+
+playerOwnersContent.addEventListener(
+    "click",
+    function (event) {
+
+        const managerButton =
+            event.target.closest(".owner-manager-link");
+
+        if (!managerButton) {
+            return;
+        }
+
+        const managerName =
+            managerButton.dataset.manager;
+
+        openManagerFromOwners(managerName);
+    }
+);
+
+function openManagerFromOwners(managerName) {
+
+    const ownersModalElement =
+        document.getElementById("playerOwnersModal");
+
+    const ownersModal =
+        bootstrap.Modal.getInstance(
+            ownersModalElement
+        );
+
+
+    if (ownersModal) {
+        ownersModal.hide();
+    }
+
+
+    setTimeout(() => {
+
+        showTeam(managerName);
+
+    }, 200);
+}
+
 // ==============================
 // EVENT LISTENERS
 // ==============================
@@ -518,9 +1026,51 @@ playerSelect.addEventListener("change", function () {
     }
 });
 
+const tableScrollTop =
+    document.getElementById("tableScrollTop");
+
+const tableScrollTopInner =
+    document.getElementById("tableScrollTopInner");
+
+const tableScrollBottom =
+    document.getElementById("tableScrollBottom");
+
+const customTable =
+    document.querySelector(".custom-table");
+
+
+function updateTopScrollbar() {
+
+    tableScrollTopInner.style.width =
+        `${customTable.scrollWidth}px`;
+}
+
+
+// alsó scrollbar → felső scrollbar
+tableScrollBottom.addEventListener("scroll", function () {
+
+    tableScrollTop.scrollLeft =
+        tableScrollBottom.scrollLeft;
+});
+
+
+// felső scrollbar → alsó scrollbar
+tableScrollTop.addEventListener("scroll", function () {
+
+    tableScrollBottom.scrollLeft =
+        tableScrollTop.scrollLeft;
+});
+
+
+window.addEventListener(
+    "resize",
+    updateTopScrollbar
+);
 
 // ==============================
 // START APPLICATION
 // ==============================
 
 loadData();
+
+updateTopScrollbar();
