@@ -112,11 +112,33 @@
                         Gameweek
                     </label>
 
-                    <select
-                            class="form-select custom-select"
-                            id="gwSelect"
-                    >
-                    </select>
+                    <div class="gw-selector">
+
+                        <button
+                                type="button"
+                                class="gw-arrow"
+                                id="previousGW"
+                                title="Előző Gameweek"
+                        >
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+
+                        <select
+                                class="form-select custom-select"
+                                id="gwSelect"
+                        >
+                        </select>
+
+                        <button
+                                type="button"
+                                class="gw-arrow"
+                                id="nextGW"
+                                title="Következő Gameweek"
+                        >
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -155,24 +177,145 @@
 
                 <thead>
                 <tr>
-                    <th>Helyezés</th>
-                    <th>Játékos</th>
-                    <th>GW<br>helyezés</th>
-                    <th>GW pont</th>
-                    <th>Összpont</th>
-                    <th>Átlag<br>GW pont</th>
-                    <th>Max<br>GW pont</th>
-                    <th>Min<br>GW pont</th>
-                    <th>GW<br>győzelem</th>
-                    <th>GW Top 3</th>
-                    <th>Kapitány<br>pont</th>
-                    <th>Kapitány<br>%</th>
-                    <th>Transzferek</th>
-                    <th>Transzfer<br>előny</th>
-                    <th>Padon hagyott<br>pont</th>
-                    <th>Összes padon<br>hagyott pont</th>
-                    <th>Átlag<br>padpont</th>
-                    <th>GW pad<br>helyezés</th>
+
+                    <th
+                            class="sortable"
+                            data-key="Ranking"
+                    >
+                        Helyezés
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Name"
+                    >
+                        Játékos
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="GW ranking"
+                    >
+                        GW<br>helyezés
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="GW points"
+                    >
+                        GW pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Sum points up to GW"
+                    >
+                        Összpont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Average GW points"
+                    >
+                        Átlag<br>GW pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Max GW points"
+                    >
+                        Max<br>GW pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Min GW points"
+                    >
+                        Min<br>GW pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Number of GW wins"
+                    >
+                        GW<br>győzelem
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Number of GW TOP3"
+                    >
+                        GW Top 3
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Captain points"
+                    >
+                        Kapitány<br>pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Captain points/GW points [%]"
+                    >
+                        Kapitány<br>GW %
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Captain points/total points [%]"
+                    >
+                        Kapitány<br>%
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Transfers"
+                    >
+                        Transzferek
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Net advantage from transfer"
+                    >
+                        Transzfer<br>haszon
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Points left on bench"
+                    >
+                        Padon hagyott<br>pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Total points left on bench"
+                    >Összes padon<br>hagyott pont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="Average points left on bench"
+                    >
+                        Átlag<br>padpont
+                    </th>
+
+                    <th
+                            class="sortable"
+                            data-key="GW Bench Ranking"
+                    >
+                        GW pad<br>helyezés
+                    </th>
+                    <th
+                            class="sortable"
+                            data-key="Total Bench Ranking"
+                    >
+                        Összesített pad<br>helyezés
+                    </th>
+
                 </tr>
                 </thead>
 

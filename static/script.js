@@ -5,12 +5,20 @@
 let allData = [];
 let currentData = [];
 
+let sortKey = "Ranking";
+let sortDirection = "asc";
+
 
 // ==============================
 // DOM ELEMENTS
 // ==============================
 
 const gwSelect = document.getElementById("gwSelect");
+const previousGW =
+    document.getElementById("previousGW");
+
+const nextGW =
+    document.getElementById("nextGW");
 const playerSelect = document.getElementById("playerSelect");
 const tableBody = document.getElementById("tableBody");
 const podiumContainer = document.getElementById("podiumContainer");
@@ -279,6 +287,106 @@ function renderPodium(data) {
     ).join("");
 }
 
+function sortTable(key) {
+
+    if (sortKey === key) {
+
+        // Ha ugyanarra kattintunk újra,
+        // megfordítjuk a sorrendet
+        sortDirection =
+            sortDirection === "asc"
+                ? "desc"
+                : "asc";
+
+    } else {
+
+        sortKey = key;
+
+        // Ezeknél az 1. hely a legjobb,
+        // ezért első kattintásra növekvő sorrend
+        const ascendingColumns = [
+    "Ranking",
+    "GW ranking",
+    "GW Bench Ranking",
+    "Total Bench Ranking",
+    "Name"
+];
+
+if (ascendingColumns.includes(key)) {
+    sortDirection = "asc";
+} else {
+    sortDirection = "desc";
+}
+    }
+
+
+    currentData.sort((a, b) => {
+
+        let valueA = a[key];
+        let valueB = b[key];
+
+        const numberA = Number(valueA);
+        const numberB = Number(valueB);
+
+
+        // SZÁMOK RENDEZÉSE
+
+        if (
+            !isNaN(numberA) &&
+            !isNaN(numberB)
+        ) {
+
+            return sortDirection === "asc"
+                ? numberA - numberB
+                : numberB - numberA;
+        }
+
+
+        // SZÖVEGEK RENDEZÉSE
+
+        valueA = String(valueA);
+        valueB = String(valueB);
+
+        return sortDirection === "asc"
+            ? valueA.localeCompare(valueB, "hu")
+            : valueB.localeCompare(valueA, "hu");
+    });
+
+
+    renderTable(currentData);
+
+    updateSortIndicators();
+}
+
+document.querySelectorAll(".sortable").forEach(header => {
+
+    header.addEventListener("click", function () {
+
+        const key = this.dataset.key;
+
+        sortTable(key);
+    });
+});
+
+function updateSortIndicators() {
+
+    document.querySelectorAll(".sortable").forEach(header => {
+
+        header.classList.remove(
+            "sort-asc",
+            "sort-desc"
+        );
+
+        if (header.dataset.key === sortKey) {
+
+            header.classList.add(
+                sortDirection === "asc"
+                    ? "sort-asc"
+                    : "sort-desc"
+            );
+        }
+    });
+}
 
 // ==============================
 // RENDER TABLE
@@ -358,6 +466,11 @@ function renderTable(data) {
                 <td>
                     ${formatValue(player["Captain points"])}
                 </td>
+                <td>
+    ${formatNumber(
+        player["Captain points/GW points [%]"]
+    )}%
+</td>
 
                 <td>
                     ${formatNumber(
@@ -398,6 +511,12 @@ function renderTable(data) {
                         player["GW Bench Ranking"]
                     )}
                 </td>
+
+                <td>
+    ${formatValue(
+        player["Total Bench Ranking"]
+    )}
+</td>
 
             </tr>
         `;
@@ -1005,6 +1124,47 @@ gwSelect.addEventListener(
     }
 );
 
+// ELŐZŐ GAMEWEEK
+
+previousGW.addEventListener("click", function () {
+
+    const currentIndex = gwSelect.selectedIndex;
+
+    if (currentIndex > 0) {
+
+        gwSelect.selectedIndex =
+            currentIndex - 1;
+
+        const selectedGW = Number(
+            gwSelect.value
+        );
+
+        loadGW(selectedGW);
+    }
+});
+
+
+// KÖVETKEZŐ GAMEWEEK
+
+nextGW.addEventListener("click", function () {
+
+    const currentIndex = gwSelect.selectedIndex;
+
+    if (
+        currentIndex <
+        gwSelect.options.length - 1
+    ) {
+
+        gwSelect.selectedIndex =
+            currentIndex + 1;
+
+        const selectedGW = Number(
+            gwSelect.value
+        );
+
+        loadGW(selectedGW);
+    }
+});
 
 // PLAYER SEARCH
 
@@ -1018,11 +1178,15 @@ playerSelect.addEventListener("change", function () {
 
     } else {
 
-        const filteredData = currentData.filter(player =>
+        const playerHistory = allData.filter(player =>
             player.Name === selectedPlayer
         );
 
-        renderTable(filteredData);
+        playerHistory.sort((a, b) =>
+            Number(a.GW) - Number(b.GW)
+        );
+
+        renderTable(playerHistory);
     }
 });
 

@@ -8,7 +8,6 @@ from functools import lru_cache
 
 @lru_cache(maxsize=50)
 def get_all_manager_picks_for_gw(gw):
-
     all_picks = {}
 
     for manager_name, entry_id in NAME_MAP.items():
@@ -26,9 +25,9 @@ def get_all_manager_picks_for_gw(gw):
 
     return all_picks
 
+
 @lru_cache(maxsize=500)
 def get_cached_manager_picks(entry_id, gw):
-
     return fpl_get(
         f"entry/{entry_id}/event/{gw}/picks/"
     )
@@ -36,7 +35,6 @@ def get_cached_manager_picks(entry_id, gw):
 
 LEAGUE_ID = 654619
 FPL_API = "https://fantasy.premierleague.com/api"
-
 
 NAME_MAP = {
     "Ricsi": 5017827,
@@ -50,7 +48,6 @@ NAME_MAP = {
     "Ácska": 3314113,
     "Ákos": 3378768
 }
-
 
 app = Flask(__name__)
 
@@ -84,7 +81,6 @@ def get_manager_history(entry_id):
 
 
 def get_manager_picks(entry_id, gw):
-
     return get_cached_manager_picks(
         entry_id,
         gw
@@ -99,7 +95,6 @@ def get_manager_transfers(entry_id):
 
 @lru_cache(maxsize=50)
 def get_live_points(gw):
-
     data = fpl_get(
         f"event/{gw}/live/"
     )
@@ -111,11 +106,10 @@ def get_live_points(gw):
 
 
 def calculate_transfer_advantage(
-    transfers,
-    gw,
-    live_points
+        transfers,
+        gw,
+        live_points
 ):
-
     advantage = 0
 
     gw_transfers = [
@@ -125,7 +119,6 @@ def calculate_transfer_advantage(
     ]
 
     for transfer in gw_transfers:
-
         player_in = transfer["element_in"]
         player_out = transfer["element_out"]
 
@@ -140,15 +133,14 @@ def calculate_transfer_advantage(
         )
 
         advantage += (
-            points_in
-            - points_out
+                points_in
+                - points_out
         )
 
     return advantage
 
 
 def build_raw_data():
-
     rows = []
 
     for manager_name, entry_id in NAME_MAP.items():
@@ -234,6 +226,11 @@ def build_raw_data():
                 "GW points": gw_data["points"],
                 "Sum points up to GW": gw_data["total_points"],
                 "Captain points": captain_points,
+                "Captain points/GW points [%]": (
+                    captain_points / gw_data["points"] * 100
+                    if gw_data["points"] > 0
+                    else 0
+                ),
                 "Transfers": gw_data["event_transfers"],
                 "Net advantage from transfer": transfer_advantage,
                 "Points left on bench": bench_points
@@ -241,53 +238,33 @@ def build_raw_data():
 
     return rows
 
+
 def add_calculated_stats(rows):
 
     gameweeks = sorted(
-        set(
-            row["GW"]
-            for row in rows
-        )
+        set(row["GW"] for row in rows)
     )
 
-    managers = list(
-        NAME_MAP.keys()
-    )
+    managers = list(NAME_MAP.keys())
 
-    manager_history = {
-        manager: []
-        for manager in managers
-    }
+    manager_history = {manager: [] for manager in managers}
+    total_bench_history = {manager: 0 for manager in managers}
+    gw_wins = {manager: 0 for manager in managers}
+    gw_top3 = {manager: 0 for manager in managers}
+    captain_total = {manager: 0 for manager in managers}
 
-    total_bench_history = {
-        manager: 0
-        for manager in managers
-    }
-
-    gw_wins = {
-        manager: 0
-        for manager in managers
-    }
-
-    gw_top3 = {
-        manager: 0
-        for manager in managers
-    }
-
-    captain_total = {
-        manager: 0
-        for manager in managers
-    }
 
     for gw in gameweeks:
 
         gw_rows = [
-            row
-            for row in rows
+            row for row in rows
             if row["GW"] == gw
         ]
 
+
+        # ==============================
         # GW RANKING
+        # ==============================
 
         sorted_gw = sorted(
             gw_rows,
@@ -295,96 +272,76 @@ def add_calculated_stats(rows):
             reverse=True
         )
 
-        for position, row in enumerate(
-            sorted_gw,
-            start=1
-        ):
+        for position, row in enumerate(sorted_gw, start=1):
 
             row["GW ranking"] = position
 
             if position == 1:
-                gw_wins[
-                    row["Name"]
-                ] += 1
+                gw_wins[row["Name"]] += 1
 
             if position <= 3:
-                gw_top3[
-                    row["Name"]
-                ] += 1
+                gw_top3[row["Name"]] += 1
 
+
+        # ==============================
         # OVERALL RANKING
+        # ==============================
 
         sorted_total = sorted(
             gw_rows,
-            key=lambda row:
-                row["Sum points up to GW"],
+            key=lambda row: row["Sum points up to GW"],
             reverse=True
         )
 
-        for position, row in enumerate(
-            sorted_total,
-            start=1
-        ):
+        for position, row in enumerate(sorted_total, start=1):
 
             row["Ranking"] = position
 
-        # BENCH RANKING
+
+        # ==============================
+        # GW BENCH RANKING
+        # ==============================
 
         sorted_bench = sorted(
             gw_rows,
-            key=lambda row:
-                row["Points left on bench"],
+            key=lambda row: row["Points left on bench"],
             reverse=True
         )
 
-        for position, row in enumerate(
-            sorted_bench,
-            start=1
-        ):
+        for position, row in enumerate(sorted_bench, start=1):
 
-            row[
-                "GW Bench Ranking"
-            ] = position
+            row["GW Bench Ranking"] = position
 
-        # CUMULATIVE STATS
+
+        # ==============================
+        # CALCULATED STATS
+        # ==============================
 
         for row in gw_rows:
 
             manager = row["Name"]
             points = row["GW points"]
 
-            manager_history[
-                manager
-            ].append(points)
+            manager_history[manager].append(points)
 
-            total_bench_history[
-                manager
-            ] += row[
-                "Points left on bench"
-            ]
+            total_bench_history[manager] += (
+                row["Points left on bench"]
+            )
 
-            captain_total[
-                manager
-            ] += row[
-                "Captain points"
-            ]
+            captain_total[manager] += (
+                row["Captain points"]
+            )
 
-            history = manager_history[
-                manager
-            ]
+            history = manager_history[manager]
+
 
             row["Average GW points"] = (
-                sum(history)
-                / len(history)
+                sum(history) / len(history)
             )
 
-            row["Max GW points"] = max(
-                history
-            )
+            row["Max GW points"] = max(history)
 
-            row["Min GW points"] = min(
-                history
-            )
+            row["Min GW points"] = min(history)
 
             row["Number of GW wins"] = (
                 gw_wins[manager]
@@ -394,53 +351,74 @@ def add_calculated_stats(rows):
                 gw_top3[manager]
             )
 
-            row[
-                "Total points left on bench"
-            ] = total_bench_history[
-                manager
-            ]
+            row["Total points left on bench"] = (
+                total_bench_history[manager]
+            )
 
-            row[
-                "Average points left on bench"
-            ] = (
-                total_bench_history[
-                    manager
-                ]
+            row["Average points left on bench"] = (
+                total_bench_history[manager]
                 / len(history)
             )
 
-            total_points = row[
-                "Sum points up to GW"
-            ]
+
+            total_points = row["Sum points up to GW"]
 
             if total_points > 0:
 
-                row[
-                    "Captain points/total points [%]"
-                ] = (
-                    captain_total[
-                        manager
-                    ]
+                row["Captain points/total points [%]"] = (
+                    captain_total[manager]
                     / total_points
                     * 100
                 )
 
             else:
 
-                row[
-                    "Captain points/total points [%]"
-                ] = 0
+                row["Captain points/total points [%]"] = 0
+
+
+    # ==========================================
+    # TOTAL BENCH RANKING
+    # ==========================================
+    #
+    # EZ FONTOS:
+    # a fenti ciklus UTÁN kell lennie,
+    # mert csak ekkor létezik már minden sorban
+    # a "Total points left on bench"
+    #
+
+    for gw in gameweeks:
+
+        gw_rows = [
+            row for row in rows
+            if row["GW"] == gw
+        ]
+
+        sorted_total_bench = sorted(
+            gw_rows,
+            key=lambda row: row[
+                "Total points left on bench"
+            ],
+            reverse=True
+        )
+
+        for position, row in enumerate(
+            sorted_total_bench,
+            start=1
+        ):
+
+            row["Total Bench Ranking"] = position
+
 
     return rows
 
-def get_dashboard_data():
 
+def get_dashboard_data():
     current_time = time.time()
 
     cache_is_valid = (
-        dashboard_cache["data"] is not None
-        and
-        current_time - dashboard_cache["timestamp"] < CACHE_DURATION
+            dashboard_cache["data"] is not None
+            and
+            current_time - dashboard_cache["timestamp"] < CACHE_DURATION
     )
 
     if cache_is_valid:
@@ -460,9 +438,9 @@ def get_dashboard_data():
 
     return data
 
+
 @app.route("/")
 def home():
-
     data = get_dashboard_data()
 
     return render_template(
@@ -470,9 +448,9 @@ def home():
         data=data
     )
 
+
 @app.route("/api/refresh")
 def refresh_dashboard():
-
     dashboard_cache["data"] = None
     dashboard_cache["timestamp"] = 0
 
@@ -483,9 +461,9 @@ def refresh_dashboard():
         "rows": len(data)
     })
 
+
 @app.route("/api/team/<manager_name>/<int:gw>")
 def get_team(manager_name, gw):
-
     entry_id = NAME_MAP.get(manager_name)
 
     if entry_id is None:
@@ -512,7 +490,6 @@ def get_team(manager_name, gw):
 
     picks_data = picks_response.json()
 
-
     # Játékosadatok lekérése
     bootstrap_url = f"{FPL_API}/bootstrap-static/"
 
@@ -525,12 +502,10 @@ def get_team(manager_name, gw):
 
     bootstrap_data = bootstrap_response.json()
 
-
     players_by_id = {
         player["id"]: player
         for player in bootstrap_data["elements"]
     }
-
 
     position_names = {
         1: "GK",
@@ -538,7 +513,6 @@ def get_team(manager_name, gw):
         3: "MID",
         4: "FWD"
     }
-
 
     team = []
 
@@ -564,7 +538,6 @@ def get_team(manager_name, gw):
             "vice_captain": pick["is_vice_captain"]
         })
 
-
     return jsonify({
         "manager": manager_name,
         "entry_id": entry_id,
@@ -572,9 +545,9 @@ def get_team(manager_name, gw):
         "team": team
     })
 
+
 @app.route("/api/league")
 def get_league():
-
     url = (
         f"{FPL_API}/leagues-classic/"
         f"{LEAGUE_ID}/standings/"
@@ -596,9 +569,9 @@ def get_league():
 
     return jsonify(managers)
 
+
 @app.route("/api/player-owners/<int:player_id>/<int:gw>")
 def get_player_owners(player_id, gw):
-
     owners = []
 
     all_manager_picks = get_all_manager_picks_for_gw(
@@ -610,7 +583,6 @@ def get_player_owners(player_id, gw):
         for pick in picks:
 
             if pick["element"] == player_id:
-
                 owners.append({
                     "manager": manager_name,
                     "captain": pick["is_captain"],
@@ -626,6 +598,7 @@ def get_player_owners(player_id, gw):
         "count": len(owners),
         "owners": owners
     })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
