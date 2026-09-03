@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify
 import requests
 import time
+import json
+import os
+import threading
 from functools import lru_cache
 
 from functools import lru_cache
@@ -51,7 +54,10 @@ NAME_MAP = {
 
 app = Flask(__name__)
 
-CACHE_DURATION = 300  # 5 perc
+CACHE_FILE = "dashboard_cache.json"
+CACHE_DURATION = 21600  # 6 óra
+
+refresh_lock = threading.Lock()
 
 dashboard_cache = {
     "data": None,
@@ -60,6 +66,92 @@ dashboard_cache = {
 
 session = requests.Session()
 
+def load_cache():
+
+    if not os.path.exists(CACHE_FILE):
+        return None
+
+    try:
+        with open(
+            CACHE_FILE,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
+            return json.load(file)
+
+    except (
+        json.JSONDecodeError,
+        OSError
+    ):
+        return None
+
+def save_cache(data):
+
+    cache = {
+        "timestamp": time.time(),
+        "data": data
+    }
+
+    temp_file = CACHE_FILE + ".tmp"
+
+    with open(
+        temp_file,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        json.dump(
+            cache,
+            file,
+            ensure_ascii=False
+        )
+
+    os.replace(
+        temp_file,
+        CACHE_FILE
+    )
+
+
+def refresh_dashboard_data():
+
+    if not refresh_lock.acquire(
+        blocking=False
+    ):
+        print(
+            "Dashboard frissítés már folyamatban van."
+        )
+        return
+
+    try:
+
+        print(
+            "Dashboard frissítése "
+            "FPL API-ból..."
+        )
+
+        raw_data = build_raw_data()
+
+        data = add_calculated_stats(
+            raw_data
+        )
+
+        save_cache(data)
+
+        print(
+            "Dashboard cache frissítve."
+        )
+
+    except Exception as error:
+
+        print(
+            "Dashboard frissítési hiba:",
+            error
+        )
+
+    finally:
+
+        refresh_lock.release()
 
 def fpl_get(endpoint):
     url = f"{FPL_API}/{endpoint}"
@@ -413,34 +505,73 @@ def add_calculated_stats(rows):
 
 
 def get_dashboard_data():
-    current_time = time.time()
 
-    cache_is_valid = (
-            dashboard_cache["data"] is not None
-            and
-            current_time - dashboard_cache["timestamp"] < CACHE_DURATION
+    cache = load_cache()
+
+
+    # -------------------------
+    # NINCS MÉG CACHE
+    # -------------------------
+
+    if cache is None:
+
+        print(
+            "Nincs cache, első adatbetöltés..."
+        )
+
+        raw_data = build_raw_data()
+
+        data = add_calculated_stats(
+            raw_data
+        )
+
+        save_cache(data)
+
+        return data
+
+
+    # -------------------------
+    # VAN CACHE
+    # -------------------------
+
+    data = cache["data"]
+
+    cache_age = (
+        time.time()
+        - cache["timestamp"]
     )
 
-    if cache_is_valid:
-        print("Dashboard betöltése cache-ből")
-        return dashboard_cache["data"]
 
-    print("Dashboard frissítése FPL API-ból")
+    # -------------------------
+    # CACHE LEJÁRT
+    # -------------------------
 
-    raw_data = build_raw_data()
+    if cache_age > CACHE_DURATION:
 
-    data = add_calculated_stats(
-        raw_data
-    )
+        print(
+            "Cache régi → "
+            "háttérfrissítés indul."
+        )
 
-    dashboard_cache["data"] = data
-    dashboard_cache["timestamp"] = current_time
+        refresh_thread = threading.Thread(
+            target=refresh_dashboard_data,
+            daemon=True
+        )
+
+        refresh_thread.start()
+
+
+    # -------------------------
+    # MINDIG A CACHE-T ADJUK
+    # VISSZA AZONNAL
+    # -------------------------
 
     return data
 
 
 @app.route("/")
 def home():
+
     data = get_dashboard_data()
 
     return render_template(
@@ -451,14 +582,25 @@ def home():
 
 @app.route("/api/refresh")
 def refresh_dashboard():
-    dashboard_cache["data"] = None
-    dashboard_cache["timestamp"] = 0
 
-    data = get_dashboard_data()
+    refresh_dashboard_data()
+
+    cache = load_cache()
+
+    if cache is None:
+
+        return jsonify({
+            "error":
+                "Nem sikerült frissíteni "
+                "a dashboardot."
+        }), 500
 
     return jsonify({
-        "message": "Dashboard frissítve",
-        "rows": len(data)
+        "message":
+            "Dashboard frissítve",
+
+        "rows":
+            len(cache["data"])
     })
 
 
