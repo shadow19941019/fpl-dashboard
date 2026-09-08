@@ -41,7 +41,7 @@ function loadData() {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="18" class="text-center text-danger py-5">
+                <td colspan="21" class="text-center text-danger py-5">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     Nem sikerült betölteni az adatokat.
                 </td>
@@ -306,6 +306,7 @@ function sortTable(key) {
         // ezért első kattintásra növekvő sorrend
         const ascendingColumns = [
     "Ranking",
+    "GW",
     "GW ranking",
     "GW Bench Ranking",
     "Total Bench Ranking",
@@ -398,7 +399,7 @@ function renderTable(data) {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="18"
+                <td colspan="21"
                     class="text-center text-secondary py-5">
                     Nem található játékos.
                 </td>
@@ -430,6 +431,10 @@ function renderTable(data) {
     </button>
 
 </td>
+
+                <td>
+                    ${formatValue(player["GW"])}
+                </td>
 
                 <td>
                     ${formatValue(player["GW ranking"])}
