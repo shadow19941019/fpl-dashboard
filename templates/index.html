@@ -14,416 +14,326 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Saját CSS -->
-    <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='styles.css') }}"
-    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 
 <body>
 
-<!-- NAVBAR -->
+    <!-- NAVBAR -->
 
-<nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
-    <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+        <div class="container">
 
-        <img src="https://fantasy.premierleague.com/assets/headline-logo-DgE6C_gE.svg" height="50px">
-    </div>
-</nav>
+            <img src="https://fantasy.premierleague.com/assets/headline-logo-DgE6C_gE.svg" height="50px">
+        </div>
+    </nav>
 
-<!-- HEADER -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7">
+    <!-- HEADER -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
                     <span class="badge season-badge mb-3">
                         2026 / 27 SEASON
                     </span>
-                <h1 class="display-4 fw-bold">
-                    Padon hagyott pontok bajnokai
-                </h1>
-                <p class="lead">
-                    Kövesd a ligánk ranglistáját, Gameweek eredményeit
-                    és a legfontosabb statisztikákat.
-                </p>
-            </div>
-            <div class="col-lg-5">
-                <div class="stats-card">
-                    <div class="row text-center">
+                    <h1 class="display-4 fw-bold">
+                        Padon hagyott pontok bajnokai
+                    </h1>
+                    <p class="lead">
+                        Kövesd a ligánk ranglistáját, Gameweek eredményeit
+                        és a legfontosabb statisztikákat.
+                    </p>
+                </div>
+                <div class="col-lg-5">
+                    <div class="stats-card">
+                        <div class="row text-center">
 
-                        <div class="col">
-                            <div class="stat-number" id="playerCount">-</div>
-                            <div class="stat-label">JÁTÉKOS</div>
+                            <div class="col">
+                                <div class="stat-number" id="playerCount">-</div>
+                                <div class="stat-label">JÁTÉKOS</div>
+                            </div>
+
+                            <div class="col">
+                                <div class="stat-number" id="currentGW">-</div>
+                                <div class="stat-label">AKTUÁLIS GW</div>
+                            </div>
+
                         </div>
-
-                        <div class="col">
-                            <div class="stat-number" id="currentGW">-</div>
-                            <div class="stat-label">AKTUÁLIS GW</div>
-                        </div>
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT -->
 
-<main class="container py-5">
-
-
-    <!-- PODIUM -->
-
-    <div class="row mb-5" id="podiumContainer">
-
-        <!-- JavaScript tölti -->
-
-    </div>
+    <main class="container py-5">
 
 
-    <!-- TABLE CARD -->
+        <!-- PODIUM -->
 
-    <div class="table-card">
+        <div class="row mb-5" id="podiumContainer">
 
-        <div class="table-header">
+            <!-- JavaScript tölti -->
 
-            <div class="table-header-title">
-
-                <h3>
-                    <i class="bi bi-bar-chart-fill me-2"></i>
-                    Ranglista
-                </h3>
-
-                <p id="tableSubtitle">
-                    Aktuális állás
-                </p>
-
-            </div>
+        </div>
 
 
-            <div class="table-filters">
+        <!-- TABLE CARD -->
 
-                <div class="table-filter">
+        <div class="table-card">
 
-                    <label for="gwSelect">
-                        <i class="bi bi-calendar-week me-1"></i>
-                        Gameweek
-                    </label>
+            <div class="table-header">
 
-                    <div class="gw-selector">
+                <div class="table-header-title">
 
-                        <button
-                                type="button"
-                                class="gw-arrow"
-                                id="previousGW"
-                                title="Előző Gameweek"
-                        >
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
+                    <h3>
+                        <i class="bi bi-bar-chart-fill me-2"></i>
+                        Ranglista
+                    </h3>
 
-                        <select
-                                class="form-select custom-select"
-                                id="gwSelect"
-                        >
+                    <p id="tableSubtitle">
+                        Aktuális állás
+                    </p>
+
+                </div>
+
+
+                <div class="table-filters">
+
+                    <div class="table-filter">
+
+                        <label for="gwSelect">
+                            <i class="bi bi-calendar-week me-1"></i>
+                            Gameweek
+                        </label>
+
+                        <div class="gw-selector">
+
+                            <button type="button" class="gw-arrow" id="previousGW" title="Előző Gameweek">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+
+                            <select class="form-select custom-select" id="gwSelect">
+                            </select>
+
+                            <button type="button" class="gw-arrow" id="nextGW" title="Következő Gameweek">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-filter">
+
+                        <label for="playerSelect">
+                            <i class="bi bi-person-fill me-1"></i>
+                            Játékos
+                        </label>
+
+                        <select class="form-select custom-select" id="playerSelect">
+                            <option value="all">
+                                Összes játékos
+                            </option>
                         </select>
 
-                        <button
-                                type="button"
-                                class="gw-arrow"
-                                id="nextGW"
-                                title="Következő Gameweek"
-                        >
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
-
                     </div>
 
                 </div>
 
-
-                <div class="table-filter">
-
-                    <label for="playerSelect">
-                        <i class="bi bi-person-fill me-1"></i>
-                        Játékos
-                    </label>
-
-                    <select
-                            class="form-select custom-select"
-                            id="playerSelect"
-                    >
-                        <option value="all">
-                            Összes játékos
-                        </option>
-                    </select>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- FELSŐ SCROLLBAR -->
-        <div class="table-scroll-top" id="tableScrollTop">
-            <div class="table-scroll-top-inner" id="tableScrollTopInner"></div>
-        </div>
-
-        <!-- TÁBLÁZAT + ALSÓ SCROLLBAR -->
-        <div class="table-responsive" id="tableScrollBottom">
-
-            <table class="table custom-table align-middle">
-
-                <thead>
-                <tr>
-
-                    <th
-                            class="sortable"
-                            data-key="Ranking"
-                    >
-                        Helyezés
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Name"
-                    >
-                        Játékos
-                    </th>
-
-                    <th class="sortable" data-key="GW">
-    GW
-</th>
-
-                    <th
-                            class="sortable"
-                            data-key="GW ranking"
-                    >
-                        GW<br>helyezés
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="GW points"
-                    >
-                        GW pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Sum points up to GW"
-                    >
-                        Összpont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Average GW points"
-                    >
-                        Átlag<br>GW pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Max GW points"
-                    >
-                        Max<br>GW pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Min GW points"
-                    >
-                        Min<br>GW pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Number of GW wins"
-                    >
-                        GW<br>győzelem
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Number of GW TOP3"
-                    >
-                        GW Top 3
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Captain points"
-                    >
-                        Kapitány<br>pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Captain points/GW points [%]"
-                    >
-                        Kapitány<br>GW %
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Captain points/total points [%]"
-                    >
-                        Kapitány<br>%
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Transfers"
-                    >
-                        Transzferek
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Net advantage from transfer"
-                    >
-                        Transzfer<br>haszon
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Points left on bench"
-                    >
-                        Padon hagyott<br>pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Total points left on bench"
-                    >Összes padon<br>hagyott pont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="Average points left on bench"
-                    >
-                        Átlag<br>padpont
-                    </th>
-
-                    <th
-                            class="sortable"
-                            data-key="GW Bench Ranking"
-                    >
-                        GW pad<br>helyezés
-                    </th>
-                    <th
-                            class="sortable"
-                            data-key="Total Bench Ranking"
-                    >
-                        Összesített pad<br>helyezés
-                    </th>
-
-                </tr>
-                </thead>
-
-
-                <tbody id="tableBody">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-    <!-- FOOTER -->
-
-    <footer class="text-center mt-5 mb-4">
-
-
-    </footer>
-
-</main>
-
-<!-- TEAM MODAL -->
-<div class="modal fade" id="teamModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="teamModalTitle">
-                    Csapat
-                </h5>
-
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-            </div>
-
-            <div class="modal-body">
-
-                <div id="teamLoading" class="text-center py-4">
-                    Csapat betöltése...
-                </div>
-
-                <div id="teamContent" class="d-none">
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<!-- PLAYER OWNERS MODAL -->
-<div
-        class="modal fade"
-        id="playerOwnersModal"
-        tabindex="-1"
->
-
-    <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5
-                        class="modal-title"
-                        id="playerOwnersModalTitle"
-                >
-                    Játékos
-                </h5>
-
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
+                <button type="button" class="refresh-button" id="refreshButton">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span id="refreshButtonText">
+                        Adatok frissítése
+                    </span>
                 </button>
 
             </div>
 
+            <!-- FELSŐ SCROLLBAR -->
+            <div class="table-scroll-top" id="tableScrollTop">
+                <div class="table-scroll-top-inner" id="tableScrollTopInner"></div>
+            </div>
 
-            <div class="modal-body">
+            <!-- TÁBLÁZAT + ALSÓ SCROLLBAR -->
+            <div class="table-responsive" id="tableScrollBottom">
 
-                <div
-                        id="playerOwnersLoading"
-                        class="text-center py-4"
-                >
-                    <div
-                            class="spinner-border spinner-border-sm me-2"
-                            role="status">
+                <table class="table custom-table align-middle">
+
+                    <thead>
+                        <tr>
+
+                            <th class="sortable" data-key="Ranking">
+                                Helyezés
+                            </th>
+
+                            <th class="sortable" data-key="Name">
+                                Játékos
+                            </th>
+
+                            <th class="sortable" data-key="GW">
+                                GW
+                            </th>
+
+                            <th class="sortable" data-key="GW ranking">
+                                GW<br>helyezés
+                            </th>
+
+                            <th class="sortable" data-key="GW points">
+                                GW pont
+                            </th>
+
+                            <th class="sortable" data-key="Sum points up to GW">
+                                Összpont
+                            </th>
+
+                            <th class="sortable" data-key="Average GW points">
+                                Átlag<br>GW pont
+                            </th>
+
+                            <th class="sortable" data-key="Max GW points">
+                                Max<br>GW pont
+                            </th>
+
+                            <th class="sortable" data-key="Min GW points">
+                                Min<br>GW pont
+                            </th>
+
+                            <th class="sortable" data-key="Number of GW wins">
+                                GW<br>győzelem
+                            </th>
+
+                            <th class="sortable" data-key="Number of GW TOP3">
+                                GW Top 3
+                            </th>
+
+                            <th class="sortable" data-key="Captain points">
+                                Kapitány<br>pont
+                            </th>
+
+                            <th class="sortable" data-key="Captain points/GW points [%]">
+                                Kapitány<br>GW %
+                            </th>
+
+                            <th class="sortable" data-key="Captain points/total points [%]">
+                                Kapitány<br>%
+                            </th>
+
+                            <th class="sortable" data-key="Transfers">
+                                Transzferek
+                            </th>
+
+                            <th class="sortable" data-key="Net advantage from transfer">
+                                Transzfer<br>haszon
+                            </th>
+
+                            <th class="sortable" data-key="Points left on bench">
+                                Padon hagyott<br>pont
+                            </th>
+
+                            <th class="sortable" data-key="Total points left on bench">Összes padon<br>hagyott pont
+                            </th>
+
+                            <th class="sortable" data-key="Average points left on bench">
+                                Átlag<br>padpont
+                            </th>
+
+                            <th class="sortable" data-key="GW Bench Ranking">
+                                GW pad<br>helyezés
+                            </th>
+                            <th class="sortable" data-key="Total Bench Ranking">
+                                Összesített pad<br>helyezés
+                            </th>
+
+                        </tr>
+                    </thead>
+
+
+                    <tbody id="tableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="text-center mt-5 mb-4">
+
+
+        </footer>
+
+    </main>
+
+    <!-- TEAM MODAL -->
+    <div class="modal fade" id="teamModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="teamModalTitle">
+                        Csapat
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div id="teamLoading" class="text-center py-4">
+                        Csapat betöltése...
                     </div>
 
-                    Csapatok betöltése...
+                    <div id="teamContent" class="d-none">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAYER OWNERS MODAL -->
+    <div class="modal fade" id="playerOwnersModal" tabindex="-1">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title" id="playerOwnersModalTitle">
+                        Játékos
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
                 </div>
 
 
-                <div
-                        id="playerOwnersContent"
-                        class="d-none">
+                <div class="modal-body">
+
+                    <div id="playerOwnersLoading" class="text-center py-4">
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                        </div>
+
+                        Csapatok betöltése...
+                    </div>
+
+
+                    <div id="playerOwnersContent" class="d-none">
+                    </div>
+
                 </div>
 
             </div>
@@ -432,17 +342,15 @@
 
     </div>
 
-</div>
+    <!-- Bootstrap JS -->
 
-<!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const allDataFromFlask = {{data | tojson }};
+    </script>
 
-<script>
-    const allDataFromFlask = {{ data | tojson }};
-</script>
-
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

@@ -978,3 +978,58 @@ body {
 .gw-arrow i {
     font-size: 1rem;
 }
+
+/* =========================
+   REFRESH BUTTON
+========================= */
+
+.refresh-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    height: 38px;
+    padding: 0 16px;
+
+    background: #240029;
+    color: white;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 10px;
+
+    font-weight: 600;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.refresh-button:hover {
+    background: #4a0750;
+    color: #00ff87;
+    border-color: #00ff87;
+}
+
+.refresh-button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.refresh-button.refreshing i {
+    animation: refresh-spin 0.8s linear infinite;
+}
+
+@keyframes refresh-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -26,6 +26,11 @@ const podiumContainer = document.getElementById("podiumContainer");
 const playerCount = document.getElementById("playerCount");
 const currentGW = document.getElementById("currentGW");
 const tableSubtitle = document.getElementById("tableSubtitle");
+const refreshButton =
+    document.getElementById("refreshButton");
+
+const refreshButtonText =
+    document.getElementById("refreshButtonText");
 
 
 // ==============================
@@ -1234,6 +1239,72 @@ tableScrollTop.addEventListener("scroll", function () {
 window.addEventListener(
     "resize",
     updateTopScrollbar
+);
+
+refreshButton.addEventListener(
+    "click",
+    async function () {
+
+        // Frissítés közben ne lehessen
+        // újra megnyomni
+        refreshButton.disabled = true;
+
+        refreshButton.classList.add(
+            "refreshing"
+        );
+
+        refreshButtonText.textContent =
+            "Frissítés...";
+
+        try {
+
+            const response = await fetch(
+                "/api/refresh"
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "A frissítés sikertelen."
+                );
+            }
+
+            const result =
+                await response.json();
+
+            console.log(result);
+
+            refreshButtonText.textContent =
+                "Frissítve ✓";
+
+            // Kis visszajelzés után
+            // újratöltjük az oldalt
+            setTimeout(() => {
+
+                window.location.reload();
+
+            }, 700);
+
+        } catch (error) {
+
+            console.error(error);
+
+            refreshButtonText.textContent =
+                "Hiba";
+
+            refreshButton.classList.remove(
+                "refreshing"
+            );
+
+            refreshButton.disabled = false;
+
+            setTimeout(() => {
+
+                refreshButtonText.textContent =
+                    "Adatok frissítése";
+
+            }, 2000);
+        }
+    }
 );
 
 // ==============================
