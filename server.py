@@ -304,13 +304,20 @@ def build_raw_data():
 
             # TRANSFER ADVANTAGE
 
-            transfer_advantage = (
-                calculate_transfer_advantage(
-                    transfers,
-                    gw,
-                    live_points
-                )
-            )
+            transfer_advantage = calculate_transfer_advantage(
+    transfers,
+    gw,
+    live_points
+)
+
+transfer_cost = gw_data.get(
+    "event_transfers_cost",
+    0
+)
+
+net_transfer_advantage = (
+    transfer_advantage - transfer_cost
+)
 
             rows.append({
                 "GW": gw,
@@ -324,7 +331,7 @@ def build_raw_data():
                     else 0
                 ),
                 "Transfers": gw_data["event_transfers"],
-                "Net advantage from transfer": transfer_advantage,
+                "Net advantage from transfer": net_transfer_advantage,
                 "Points left on bench": bench_points
             })
 
