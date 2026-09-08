@@ -442,49 +442,6 @@ function renderTable(data) {
     </td>
 
 
-    <!-- GW STATISZTIKA -->
-
-    <td class="gw-stat gw-stat-start">
-        ${formatValue(player["GW ranking"])}
-    </td>
-
-    <td class="gw-stat gw-points">
-        ${formatValue(player["GW points"])}
-    </td>
-
-    <td class="gw-stat">
-        ${formatValue(player["Captain points"])}
-    </td>
-
-    <td class="gw-stat">
-        ${formatNumber(
-            player["Captain points/GW points [%]"]
-        )}%
-    </td>
-
-    <td class="gw-stat">
-        ${formatValue(player["Transfers"])}
-    </td>
-
-    <td class="gw-stat">
-        ${formatValue(
-            player["Net advantage from transfer"]
-        )}
-    </td>
-
-    <td class="gw-stat">
-        ${formatValue(
-            player["Points left on bench"]
-        )}
-    </td>
-
-    <td class="gw-stat">
-        ${formatValue(
-            player["GW Bench Ranking"]
-        )}
-    </td>
-
-
     <!-- TELJES STATISZTIKA -->
 
     <td class="total-stat total-stat-start total-points">
@@ -540,6 +497,49 @@ function renderTable(data) {
     <td class="total-stat">
         ${formatNumber(
             player["Average points left on bench"]
+        )}
+    </td>
+
+
+    <!-- GW STATISZTIKA -->
+
+    <td class="gw-stat gw-stat-start">
+        ${formatValue(player["GW ranking"])}
+    </td>
+
+    <td class="gw-stat gw-points">
+        ${formatValue(player["GW points"])}
+    </td>
+
+    <td class="gw-stat">
+        ${formatValue(player["Captain points"])}
+    </td>
+
+    <td class="gw-stat">
+        ${formatNumber(
+            player["Captain points/GW points [%]"]
+        )}%
+    </td>
+
+    <td class="gw-stat">
+        ${formatValue(player["Transfers"])}
+    </td>
+
+    <td class="gw-stat">
+        ${formatValue(
+            player["Net advantage from transfer"]
+        )}
+    </td>
+
+    <td class="gw-stat">
+        ${formatValue(
+            player["Points left on bench"]
+        )}
+    </td>
+
+    <td class="gw-stat">
+        ${formatValue(
+            player["GW Bench Ranking"]
         )}
     </td>
 

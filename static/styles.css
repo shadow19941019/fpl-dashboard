@@ -771,17 +771,13 @@ body {
 
 /* Játékos fejléc */
 
-.custom-table th:nth-child(2) {
+.custom-table th[data-key="Name"] {
     position: sticky;
     left: 0;
     z-index: 4;
-
     background: #3d0a44;
-
     color: white;
-
-    box-shadow:
-        4px 0 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 4px 0 8px rgba(0,0,0,0.25);
 }
 
 
