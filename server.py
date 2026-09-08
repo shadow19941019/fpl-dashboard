@@ -351,6 +351,8 @@ def add_calculated_stats(rows):
     gw_wins = {manager: 0 for manager in managers}
     gw_top3 = {manager: 0 for manager in managers}
     captain_total = {manager: 0 for manager in managers}
+    total_transfers = {manager: 0 for manager in managers}
+    total_transfer_advantage = {manager: 0 for manager in managers}
 
 
     for gw in gameweeks:
@@ -431,6 +433,14 @@ def add_calculated_stats(rows):
                 row["Captain points"]
             )
 
+            total_transfers[manager] += (
+                row["Transfers"]
+            )
+
+            total_transfer_advantage[manager] += (
+                row["Net advantage from transfer"]
+            )
+
             history = manager_history[manager]
 
 
@@ -473,6 +483,14 @@ def add_calculated_stats(rows):
             else:
 
                 row["Captain points/total points [%]"] = 0
+
+            row["Total transfers"] = (
+                total_transfers[manager]
+            )
+
+            row["Total transfer advantage"] = (
+                total_transfer_advantage[manager]
+            )
 
 
     # ==========================================

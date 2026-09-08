@@ -46,7 +46,7 @@ function loadData() {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="21" class="text-center text-danger py-5">
+                <td colspan="23" class="text-center text-danger py-5">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     Nem sikerült betölteni az adatokat.
                 </td>
@@ -404,7 +404,7 @@ function renderTable(data) {
 
         tableBody.innerHTML = `
             <tr>
-                <td colspan="21"
+                <td colspan="23"
                     class="text-center text-secondary py-5">
                     Nem található játékos.
                 </td>
@@ -480,6 +480,18 @@ function renderTable(data) {
         ${formatNumber(
             player["Captain points/total points [%]"]
         )}%
+    </td>
+
+    <td class="total-stat">
+        ${formatValue(
+            player["Total transfers"]
+        )}
+    </td>
+
+    <td class="total-stat">
+        ${formatValue(
+            player["Total transfer advantage"]
+        )}
     </td>
 
     <td class="total-stat">
