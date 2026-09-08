@@ -310,12 +310,12 @@ def build_raw_data():
     live_points
 )
 
-transfer_cost = gw_data.get(
+            transfer_cost = gw_data.get(
     "event_transfers_cost",
     0
 )
 
-net_transfer_advantage = (
+            net_transfer_advantage = (
     transfer_advantage - transfer_cost
 )
 
