@@ -420,115 +420,130 @@ function renderTable(data) {
         return `
             <tr>
 
-                <td>
-                    <span class="ranking-badge">
-                        ${formatValue(player["Ranking"])}
-                    </span>
-                </td>
+    <!-- ALAPADATOK -->
 
-                <td class="player-name">
+    <td class="basic-stat">
+        <span class="ranking-badge">
+            ${formatValue(player["Ranking"])}
+        </span>
+    </td>
 
-    <button
-        class="player-link"
-        data-player="${player.Name}"
-    >
-        ${player.Name}
-    </button>
+    <td class="player-name basic-stat">
+        <button
+            class="player-link"
+            data-player="${player.Name}"
+        >
+            ${player.Name}
+        </button>
+    </td>
 
-</td>
+    <td class="basic-stat">
+        ${formatValue(player["GW"])}
+    </td>
 
-                <td>
-                    ${formatValue(player["GW"])}
-                </td>
 
-                <td>
-                    ${formatValue(player["GW ranking"])}
-                </td>
+    <!-- GW STATISZTIKA -->
 
-                <td>
-                    ${formatValue(player["GW points"])}
-                </td>
+    <td class="gw-stat gw-stat-start">
+        ${formatValue(player["GW ranking"])}
+    </td>
 
-                <td class="total-points">
-                    ${formatValue(player["Sum points up to GW"])}
-                </td>
+    <td class="gw-stat gw-points">
+        ${formatValue(player["GW points"])}
+    </td>
 
-                <td>
-                    ${formatNumber(player["Average GW points"])}
-                </td>
+    <td class="gw-stat">
+        ${formatValue(player["Captain points"])}
+    </td>
 
-                <td>
-                    ${formatValue(player["Max GW points"])}
-                </td>
+    <td class="gw-stat">
+        ${formatNumber(
+            player["Captain points/GW points [%]"]
+        )}%
+    </td>
 
-                <td>
-                    ${formatValue(player["Min GW points"])}
-                </td>
+    <td class="gw-stat">
+        ${formatValue(player["Transfers"])}
+    </td>
 
-                <td>
-                    ${formatValue(player["Number of GW wins"])}
-                </td>
+    <td class="gw-stat">
+        ${formatValue(
+            player["Net advantage from transfer"]
+        )}
+    </td>
 
-                <td>
-                    ${formatValue(player["Number of GW TOP3"])}
-                </td>
+    <td class="gw-stat">
+        ${formatValue(
+            player["Points left on bench"]
+        )}
+    </td>
 
-                <td>
-                    ${formatValue(player["Captain points"])}
-                </td>
-                <td>
-    ${formatNumber(
-        player["Captain points/GW points [%]"]
-    )}%
-</td>
+    <td class="gw-stat">
+        ${formatValue(
+            player["GW Bench Ranking"]
+        )}
+    </td>
 
-                <td>
-                    ${formatNumber(
-                        player["Captain points/total points [%]"]
-                    )}%
-                </td>
 
-                <td>
-                    ${formatValue(player["Transfers"])}
-                </td>
+    <!-- TELJES STATISZTIKA -->
 
-                <td>
-                    ${formatValue(
-                        player["Net advantage from transfer"]
-                    )}
-                </td>
+    <td class="total-stat total-stat-start total-points">
+        ${formatValue(
+            player["Sum points up to GW"]
+        )}
+    </td>
 
-                <td>
-                    ${formatValue(
-                        player["Points left on bench"]
-                    )}
-                </td>
+    <td class="total-stat">
+        ${formatNumber(
+            player["Average GW points"]
+        )}
+    </td>
 
-                <td>
-                    ${formatValue(
-                        player["Total points left on bench"]
-                    )}
-                </td>
+    <td class="total-stat">
+        ${formatValue(player["Max GW points"])}
+    </td>
 
-                <td>
-                    ${formatNumber(
-                        player["Average points left on bench"]
-                    )}
-                </td>
+    <td class="total-stat">
+        ${formatValue(player["Min GW points"])}
+    </td>
 
-                <td>
-                    ${formatValue(
-                        player["GW Bench Ranking"]
-                    )}
-                </td>
+    <td class="total-stat">
+        ${formatValue(
+            player["Number of GW wins"]
+        )}
+    </td>
 
-                <td>
-    ${formatValue(
-        player["Total Bench Ranking"]
-    )}
-</td>
+    <td class="total-stat">
+        ${formatValue(
+            player["Number of GW TOP3"]
+        )}
+    </td>
 
-            </tr>
+    <td class="total-stat">
+        ${formatNumber(
+            player["Captain points/total points [%]"]
+        )}%
+    </td>
+
+    <td class="total-stat">
+        ${formatValue(
+            player["Total points left on bench"]
+        )}
+    </td>
+
+    <td class="total-stat">
+        ${formatValue(
+            player["Total Bench Ranking"]
+        )}
+    </td>
+
+    <td class="total-stat">
+        ${formatNumber(
+            player["Average points left on bench"]
+        )}
+    </td>
+
+</tr>
         `;
 
     }).join("");

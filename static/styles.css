@@ -764,17 +764,6 @@ body {
     );
 }
 
-/* GW pont */
-.custom-table td:nth-child(5) {
-    color: #5ee7ff;
-    font-weight: 800;
-}
-
-/* Összpont */
-.custom-table td:nth-child(6) {
-    color: #00ff87;
-    font-weight: 800;
-}
 
 /* =========================
    STICKY PLAYER COLUMN
@@ -1037,4 +1026,100 @@ body {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* =========================
+   TABLE STAT GROUPS
+========================= */
+
+/* Felső csoportfejléc */
+
+.table-group-header th {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    padding: 9px 12px;
+}
+
+
+/* Alapadatok */
+
+.table-group-header .basic-group {
+    background: #240029;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+
+/* GW statisztika */
+
+.table-group-header .gw-group {
+    background: #4b1552;
+    color: #5ee7ff;
+}
+
+
+/* Teljes statisztika */
+
+.table-group-header .total-group {
+    background: #240029;
+    color: #00ff87;
+}
+
+
+/* GW oszlopfejlécek */
+
+.custom-table th.gw-stat {
+    background: #4b1552;
+}
+
+
+/* Teljes stat oszlopfejlécek */
+
+.custom-table th.total-stat {
+    background: #240029;
+}
+
+
+/* GW body */
+
+.custom-table td.gw-stat {
+    background: #3d0843;
+}
+
+
+/* Teljes stat body */
+
+.custom-table td.total-stat {
+    background: #37003c;
+}
+
+
+/* GW blokk kezdete */
+
+.custom-table .gw-stat-start {
+    border-left: 3px solid #5ee7ff !important;
+}
+
+
+/* Teljes stat blokk kezdete */
+
+.custom-table .total-stat-start {
+    border-left: 3px solid #00ff87 !important;
+}
+
+
+/* GW pont kiemelés */
+
+.custom-table td.gw-points {
+    color: #5ee7ff;
+    font-weight: 800;
+}
+
+
+/* Összpont kiemelés */
+
+.custom-table td.total-points {
+    color: #00ff87;
+    font-weight: 800;
 }
