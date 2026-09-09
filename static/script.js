@@ -8,6 +8,7 @@ let currentData = [];
 let sortKey = "Ranking";
 let sortDirection = "asc";
 let overallPointsChart = null;
+let gwPointsChart = null;
 
 
 // ==============================
@@ -32,6 +33,16 @@ const refreshButton =
 
 const refreshButtonText =
     document.getElementById("refreshButtonText");
+
+const gwPointsManagerButton =
+    document.getElementById(
+        "gwPointsManagerButton"
+    );
+
+const gwPointsManagerDropdown =
+    document.getElementById(
+        "gwPointsManagerDropdown"
+    );
 
 
 // ==============================
@@ -78,7 +89,11 @@ function loadData() {
     // Gameweek selector létrehozása
     createGWSelect();
     createPlayerSelect();
+
     createOverallPointsChart();
+
+    createGWPointsManagerFilter();
+    createGWPointsChart();
 }
 
 
@@ -400,18 +415,48 @@ function updateSortIndicators() {
 // RENDER CHART
 // ==============================
 
+function createGWPointsManagerFilter() {
+
+    const managers = [
+        ...new Set(
+            allData.map(row => row.Name)
+        )
+    ];
+
+    gwPointsManagerDropdown.innerHTML =
+        managers.map(manager => `
+            <label class="chart-manager-option">
+
+                <input
+                    type="checkbox"
+                    class="gw-points-manager-checkbox"
+                    value="${manager}"
+                    checked
+                >
+
+                <span
+                    class="manager-color-dot"
+                    style="background:${managerColors[manager]}"
+                ></span>
+
+                ${manager}
+
+            </label>
+        `).join("");
+}
+
 function createOverallPointsChart() {
 
     const managerColors = {
-    "Bala": "#b81f0ec4",
+    "Bala": "#e82210c4",
     "Ricsi": "#00D9FF",
-    "Sanyi": "#090304",
+    "Sanyi": "#848383",
     "Toni": "#FFD600",
     "Benji": "#FF7A00",
-    "Lazi": "#0a3a03",
+    "Lazi": "#44c730",
     "Zolka": "#0541c2",
-    "Gabesz": "#7c0d9e",
-    "Ácska": "#14db1e",
+    "Gabesz": "#9255a4",
+    "Ácska": "#84ed8a",
     "Ákos": "#FFFFFF"
 };
 
@@ -575,6 +620,166 @@ overallPointsChart = new ApexCharts(
 
 overallPointsChart.render();
 
+}
+
+function createGWPointsChart() {
+
+    const chartElement =
+        document.querySelector("#gwPointsChart");
+
+    if (!chartElement) {
+        return;
+    }
+
+    const gameweeks = [
+        ...new Set(
+            allData.map(row => Number(row.GW))
+        )
+    ].sort((a, b) => a - b);
+
+    const selectedManagers = [
+        ...document.querySelectorAll(
+            ".gw-points-manager-checkbox:checked"
+        )
+    ].map(
+        checkbox => checkbox.value
+    );
+
+    const series =
+        selectedManagers.map(manager => {
+
+            const managerData = allData
+                .filter(
+                    row =>
+                        row.Name === manager
+                )
+                .sort(
+                    (a, b) =>
+                        Number(a.GW) -
+                        Number(b.GW)
+                );
+
+            const points =
+                gameweeks.map(gw => {
+
+                    const gwData =
+                        managerData.find(
+                            row =>
+                                Number(row.GW) === gw
+                        );
+
+                    if (!gwData) {
+                        return null;
+                    }
+
+                    return Number(
+                        gwData["GW points"]
+                    );
+                });
+
+            return {
+                name: manager,
+                data: points
+            };
+        });
+
+    const options = {
+
+        series: series,
+
+        colors: selectedManagers.map(
+            manager =>
+                managerColors[manager]
+        ),
+
+        chart: {
+            type: "line",
+            height: 450,
+            background: "transparent",
+
+            toolbar: {
+                show: false
+            },
+
+            zoom: {
+                enabled: false
+            }
+        },
+
+        stroke: {
+            curve: "straight",
+            width: 2.5
+        },
+
+        markers: {
+            size: 4,
+            strokeWidth: 0,
+
+            hover: {
+                size: 7
+            }
+        },
+
+        dataLabels: {
+            enabled: false
+        },
+
+        xaxis: {
+            categories: gameweeks.map(
+                gw => `GW ${gw}`
+            ),
+
+            labels: {
+                style: {
+                    colors:
+                        "rgba(255,255,255,0.65)"
+                }
+            }
+        },
+
+        yaxis: {
+            labels: {
+                style: {
+                    colors:
+                        "rgba(255,255,255,0.65)"
+                }
+            }
+        },
+
+        grid: {
+            borderColor:
+                "rgba(255,255,255,0.08)",
+
+            strokeDashArray: 4
+        },
+
+        legend: {
+            position: "top",
+            horizontalAlign: "left",
+
+            labels: {
+                colors: "#ffffff"
+            }
+        },
+
+        tooltip: {
+            theme: "dark",
+            shared: true,
+            intersect: false
+        }
+    };
+
+    if (gwPointsChart) {
+        gwPointsChart.destroy();
+    }
+
+    gwPointsChart =
+        new ApexCharts(
+            chartElement,
+            options
+        );
+
+    gwPointsChart.render();
 }
 
 
@@ -1514,6 +1719,53 @@ refreshButton.addEventListener(
                     "Adatok frissítése";
 
             }, 2000);
+        }
+    }
+);
+
+gwPointsManagerButton.addEventListener(
+    "click",
+    function (event) {
+
+        event.stopPropagation();
+
+        gwPointsManagerDropdown.classList.toggle(
+            "show"
+        );
+    }
+);
+
+
+gwPointsManagerDropdown.addEventListener(
+    "change",
+    function (event) {
+
+        if (
+            event.target.classList.contains(
+                "gw-points-manager-checkbox"
+            )
+        ) {
+            createGWPointsChart();
+        }
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !gwPointsManagerDropdown.contains(
+                event.target
+            ) &&
+            !gwPointsManagerButton.contains(
+                event.target
+            )
+        ) {
+            gwPointsManagerDropdown.classList.remove(
+                "show"
+            );
         }
     }
 );

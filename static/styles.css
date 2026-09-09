@@ -1142,3 +1142,93 @@ body {
     margin: 6px 0 0;
     color: rgba(255, 255, 255, 0.55);
 }
+
+.chart-header-with-filter {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.chart-manager-filter {
+    position: relative;
+}
+
+.chart-manager-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 38px;
+    padding: 0 14px;
+
+    background: #240029;
+    color: white;
+
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chart-manager-button:hover {
+    border-color: #00ff87;
+    color: #00ff87;
+}
+
+.chart-manager-dropdown {
+    display: none;
+
+    position: absolute;
+    right: 0;
+    top: 46px;
+
+    min-width: 190px;
+
+    padding: 10px;
+
+    background: #240029;
+
+    border: 1px solid
+        rgba(255,255,255,0.15);
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,0.35);
+
+    z-index: 20;
+}
+
+.chart-manager-dropdown.show {
+    display: block;
+}
+
+.chart-manager-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 7px 8px;
+
+    color: white;
+
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.chart-manager-option:hover {
+    background:
+        rgba(255,255,255,0.08);
+}
+
+.manager-color-dot {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    flex-shrink: 0;
+}
