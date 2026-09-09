@@ -10,6 +10,19 @@ let sortDirection = "asc";
 let overallPointsChart = null;
 let gwPointsChart = null;
 
+const managerColors = {
+    "Bala": "#e82210c4",
+    "Ricsi": "#00D9FF",
+    "Sanyi": "#848383",
+    "Toni": "#FFD600",
+    "Benji": "#FF7A00",
+    "Lazi": "#44c730",
+    "Zolka": "#0541c2",
+    "Gabesz": "#9255a4",
+    "Ácska": "#84ed8a",
+    "Ákos": "#FFFFFF"
+};
+
 
 // ==============================
 // DOM ELEMENTS
@@ -468,19 +481,6 @@ function createGWPointsManagerFilter() {
 }
 
 function createOverallPointsChart() {
-
-    const managerColors = {
-    "Bala": "#e82210c4",
-    "Ricsi": "#00D9FF",
-    "Sanyi": "#848383",
-    "Toni": "#FFD600",
-    "Benji": "#FF7A00",
-    "Lazi": "#44c730",
-    "Zolka": "#0541c2",
-    "Gabesz": "#9255a4",
-    "Ácska": "#84ed8a",
-    "Ákos": "#FFFFFF"
-};
 
     const chartElement =
         document.querySelector("#overallPointsChart");
