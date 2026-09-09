@@ -33,17 +33,6 @@ const refreshButton =
 const refreshButtonText =
     document.getElementById("refreshButtonText");
 
-const chartsContainer =
-    document.getElementById("chartsContainer");
-
-const chartToggleButton =
-    document.getElementById("chartToggleButton");
-
-const chartToggleText =
-    document.getElementById("chartToggleText");
-
-const chartToggleIcon =
-    document.getElementById("chartToggleIcon");
 
 // ==============================
 // LOAD DATA FROM FLASK
@@ -414,14 +403,14 @@ function updateSortIndicators() {
 function createOverallPointsChart() {
 
     const managerColors = {
-    "Bala": "#ef4431",
+    "Bala": "#b81f0ec4",
     "Ricsi": "#00D9FF",
-    "Sanyi": "#888888",
-    "Lazi": "#FFD600",
+    "Sanyi": "#090304",
+    "Toni": "#FFD600",
     "Benji": "#FF7A00",
-    "Toni": "#ef66da",
+    "Lazi": "#0a3a03",
     "Zolka": "#0541c2",
-    "Gabesz": "#93e268",
+    "Gabesz": "#7c0d9e",
     "Ácska": "#14db1e",
     "Ákos": "#FFFFFF"
 };
@@ -1525,34 +1514,6 @@ refreshButton.addEventListener(
                     "Adatok frissítése";
 
             }, 2000);
-        }
-    }
-);
-
-chartToggleButton.addEventListener(
-    "click",
-    function () {
-
-        const chartsHidden =
-            chartsContainer.classList.toggle(
-                "charts-hidden"
-            );
-
-        if (chartsHidden) {
-
-            chartToggleText.textContent =
-                "Megjelenítés";
-
-            chartToggleIcon.className =
-                "bi bi-eye";
-
-        } else {
-
-            chartToggleText.textContent =
-                "Elrejtés";
-
-            chartToggleIcon.className =
-                "bi bi-eye-slash";
         }
     }
 );
