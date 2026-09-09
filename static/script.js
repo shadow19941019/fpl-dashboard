@@ -564,7 +564,18 @@ function createOverallPointsChart() {
     }
 };
 
+if (overallPointsChart) {
+    overallPointsChart.destroy();
+}
 
+overallPointsChart = new ApexCharts(
+    chartElement,
+    options
+);
+
+overallPointsChart.render();
+
+}
 
 
 // ==============================
