@@ -7,6 +7,7 @@ let currentData = [];
 
 let sortKey = "Ranking";
 let sortDirection = "asc";
+let overallPointsChart = null;
 
 
 // ==============================
@@ -77,6 +78,7 @@ function loadData() {
     // Gameweek selector létrehozása
     createGWSelect();
     createPlayerSelect();
+    createOverallPointsChart();
 }
 
 
@@ -393,6 +395,139 @@ function updateSortIndicators() {
         }
     });
 }
+
+// ==============================
+// RENDER CHART
+// ==============================
+
+function createOverallPointsChart() {
+
+    const canvas =
+        document.getElementById("overallPointsChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const gameweeks = [
+        ...new Set(
+            allData.map(row => Number(row.GW))
+        )
+    ].sort((a, b) => a - b);
+
+    const managers = [
+        ...new Set(
+            allData.map(row => row.Name)
+        )
+    ];
+
+    const datasets = managers.map(manager => {
+
+        const managerData = allData
+            .filter(row => row.Name === manager)
+            .sort(
+                (a, b) =>
+                    Number(a.GW) - Number(b.GW)
+            );
+
+        const points = gameweeks.map(gw => {
+
+            const gwData = managerData.find(
+                row => Number(row.GW) === gw
+            );
+
+            if (!gwData) {
+                return null;
+            }
+
+            return Number(
+                gwData["Sum points up to GW"]
+            );
+        });
+
+        return {
+            label: manager,
+            data: points,
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            tension: 0.25,
+            spanGaps: true
+        };
+    });
+
+    if (overallPointsChart) {
+        overallPointsChart.destroy();
+    }
+
+    overallPointsChart = new Chart(
+        canvas,
+        {
+            type: "line",
+
+            data: {
+                labels: gameweeks.map(
+                    gw => `GW ${gw}`
+                ),
+                datasets: datasets
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                    mode: "index",
+                    intersect: false
+                },
+
+                plugins: {
+                    legend: {
+                        position: "top",
+
+                        labels: {
+                            color: "white",
+                            usePointStyle: true,
+                            padding: 18
+                        }
+                    },
+
+                    tooltip: {
+                        mode: "index",
+                        intersect: false
+                    }
+                },
+
+                scales: {
+                    x: {
+                        ticks: {
+                            color: "rgba(255,255,255,0.7)"
+                        },
+
+                        grid: {
+                            color: "rgba(255,255,255,0.08)"
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            color: "rgba(255,255,255,0.7)"
+                        },
+
+                        grid: {
+                            color: "rgba(255,255,255,0.08)"
+                        }
+                    }
+                }
+            }
+        }
+    );
+}
+
+
+
 
 // ==============================
 // RENDER TABLE

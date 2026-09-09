@@ -1115,3 +1115,31 @@ body {
     color: #00ff87;
     font-weight: 800;
 }
+
+/* CHART */
+
+.chart-card {
+    background: #37003c;
+    border-radius: 20px;
+    padding: 25px 30px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 12px 35px rgba(55, 0, 60, 0.3);
+    color: white;
+}
+
+.chart-header h3 {
+    margin: 0;
+    font-weight: 800;
+    color: white;
+}
+
+.chart-header p {
+    margin: 6px 0 0;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.chart-container {
+    position: relative;
+    height: 420px;
+    margin-top: 25px;
+}
