@@ -423,26 +423,48 @@ function createGWPointsManagerFilter() {
         )
     ];
 
-    gwPointsManagerDropdown.innerHTML =
-        managers.map(manager => `
-            <label class="chart-manager-option">
+    gwPointsManagerDropdown.innerHTML = "";
 
-                <input
-                    type="checkbox"
-                    class="gw-points-manager-checkbox"
-                    value="${manager}"
-                    checked
-                >
+    managers.forEach(manager => {
 
-                <span
-                    class="manager-color-dot"
-                    style="background:${managerColors[manager]}"
-                ></span>
+        const label =
+            document.createElement("label");
 
-                ${manager}
+        label.className =
+            "chart-manager-option";
 
-            </label>
-        `).join("");
+        const checkbox =
+            document.createElement("input");
+
+        checkbox.type = "checkbox";
+        checkbox.className =
+            "gw-points-manager-checkbox";
+
+        checkbox.value = manager;
+        checkbox.checked = true;
+
+        const colorDot =
+            document.createElement("span");
+
+        colorDot.className =
+            "manager-color-dot";
+
+        colorDot.style.background =
+            managerColors[manager];
+
+        const name =
+            document.createElement("span");
+
+        name.textContent = manager;
+
+        label.appendChild(checkbox);
+        label.appendChild(colorDot);
+        label.appendChild(name);
+
+        gwPointsManagerDropdown.appendChild(
+            label
+        );
+    });
 }
 
 function createOverallPointsChart() {
