@@ -402,10 +402,10 @@ function updateSortIndicators() {
 
 function createOverallPointsChart() {
 
-    const canvas =
-        document.getElementById("overallPointsChart");
+    const chartElement =
+        document.querySelector("#overallPointsChart");
 
-    if (!canvas) {
+    if (!chartElement) {
         return;
     }
 
@@ -421,7 +421,7 @@ function createOverallPointsChart() {
         )
     ];
 
-    const datasets = managers.map(manager => {
+    const series = managers.map(manager => {
 
         const managerData = allData
             .filter(row => row.Name === manager)
@@ -446,84 +446,120 @@ function createOverallPointsChart() {
         });
 
         return {
-            label: manager,
-            data: points,
-            borderWidth: 2,
-            pointRadius: 3,
-            pointHoverRadius: 6,
-            tension: 0.25,
-            spanGaps: true
+            name: manager,
+            data: points
         };
     });
+
+    const options = {
+
+        series: series,
+
+        chart: {
+            type: "line",
+            height: 450,
+            background: "transparent",
+            toolbar: {
+                show: false
+            },
+            zoom: {
+                enabled: false
+            }
+        },
+
+        stroke: {
+            curve: "smooth",
+            width: 3
+        },
+
+        markers: {
+            size: 4,
+            strokeWidth: 0,
+            hover: {
+                size: 7
+            }
+        },
+
+        dataLabels: {
+            enabled: false
+        },
+
+        xaxis: {
+            categories: gameweeks.map(
+                gw => `GW ${gw}`
+            ),
+
+            labels: {
+                style: {
+                    colors:
+                        "rgba(255,255,255,0.65)"
+                }
+            },
+
+            axisBorder: {
+                color:
+                    "rgba(255,255,255,0.08)"
+            },
+
+            axisTicks: {
+                color:
+                    "rgba(255,255,255,0.08)"
+            }
+        },
+
+        yaxis: {
+            labels: {
+                style: {
+                    colors:
+                        "rgba(255,255,255,0.65)"
+                }
+            }
+        },
+
+        grid: {
+            borderColor:
+                "rgba(255,255,255,0.08)",
+
+            strokeDashArray: 4
+        },
+
+        legend: {
+            position: "top",
+            horizontalAlign: "left",
+
+            labels: {
+                colors: "#ffffff"
+            },
+
+            markers: {
+                width: 10,
+                height: 10,
+                radius: 10
+            },
+
+            itemMargin: {
+                horizontal: 12,
+                vertical: 6
+            }
+        },
+
+        tooltip: {
+            theme: "dark",
+            shared: true,
+            intersect: false
+        }
+    };
 
     if (overallPointsChart) {
         overallPointsChart.destroy();
     }
 
-    overallPointsChart = new Chart(
-        canvas,
-        {
-            type: "line",
-
-            data: {
-                labels: gameweeks.map(
-                    gw => `GW ${gw}`
-                ),
-                datasets: datasets
-            },
-
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-
-                interaction: {
-                    mode: "index",
-                    intersect: false
-                },
-
-                plugins: {
-                    legend: {
-                        position: "top",
-
-                        labels: {
-                            color: "white",
-                            usePointStyle: true,
-                            padding: 18
-                        }
-                    },
-
-                    tooltip: {
-                        mode: "index",
-                        intersect: false
-                    }
-                },
-
-                scales: {
-                    x: {
-                        ticks: {
-                            color: "rgba(255,255,255,0.7)"
-                        },
-
-                        grid: {
-                            color: "rgba(255,255,255,0.08)"
-                        }
-                    },
-
-                    y: {
-                        beginAtZero: true,
-
-                        ticks: {
-                            color: "rgba(255,255,255,0.7)"
-                        },
-
-                        grid: {
-                            color: "rgba(255,255,255,0.08)"
-                        }
-                    }
-                }
-            }
-        }
+    overallPointsChart = new ApexCharts(
+        chartElement,
+        options
     );
+
+    overallPointsChart.render();
 }
 
 

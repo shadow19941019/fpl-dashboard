@@ -1119,27 +1119,27 @@ body {
 /* CHART */
 
 .chart-card {
-    background: #37003c;
+    background: #0d1733;
+    border: 1px solid rgba(94, 231, 255, 0.15);
     border-radius: 20px;
-    padding: 25px 30px 30px;
+    padding: 25px 30px;
     margin-bottom: 30px;
-    box-shadow: 0 12px 35px rgba(55, 0, 60, 0.3);
-    color: white;
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25),
+        inset 0 0 25px rgba(94, 231, 255, 0.02);
+}
+
+.chart-header {
+    margin-bottom: 10px;
 }
 
 .chart-header h3 {
     margin: 0;
-    font-weight: 800;
     color: white;
+    font-weight: 800;
 }
 
 .chart-header p {
     margin: 6px 0 0;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.chart-container {
-    position: relative;
-    height: 420px;
-    margin-top: 25px;
+    color: rgba(255, 255, 255, 0.55);
 }

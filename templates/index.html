@@ -15,7 +15,7 @@
 
     <!-- Saját CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 
@@ -83,19 +83,20 @@
         <!-- CHART-->
 
         <div class="chart-card">
+
             <div class="chart-header">
                 <div>
                     <h3>Összpont alakulása</h3>
+
                     <p>
-                        A menedzserek összpontszámának alakulása
-                        Gameweek-ről Gameweek-re
+                        A menedzserek összpontszámának
+                        alakulása Gameweek-ről Gameweek-re
                     </p>
                 </div>
             </div>
 
-            <div class="chart-container">
-                <canvas id="overallPointsChart"></canvas>
-            </div>
+            <div id="overallPointsChart"></div>
+
         </div>
 
 
