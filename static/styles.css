@@ -1265,11 +1265,40 @@ body {
     gap: 20px;
 }
 
-/* A diagramválasztó ugyanazt a custom-select
-   stílust használja, mint a GW választó,
-   csak keskenyebb szélességgel */
+/* ==============================
+   CHART SELECTOR
+   ============================== */
+
+/* A diagramválasztó ugyanazt a FPL stílust kapja,
+   mint a táblázat Gameweek választója */
 .chart-select {
     width: 210px;
     min-width: 210px;
     flex-shrink: 0;
+
+    background-color: #240029;
+    color: white;
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+}
+
+/* Fókusz esetén ugyanaz a zöld kiemelés jelenik meg,
+   mint a táblázat választóinál */
+.chart-select:focus {
+    background-color: #240029;
+    color: white;
+
+    border-color: #00ff87;
+
+    box-shadow:
+        0 0 0 0.2rem
+        rgba(0, 255, 135, 0.15);
+}
+
+/* A Bootstrap select nyila világos legyen
+   a sötét háttéren */
+.chart-select {
+    --bs-form-select-bg-img:
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
 }
