@@ -1251,32 +1251,3 @@ body {
 .toggle-all-managers:hover {
     color: #00ff87;
 }
-
-.chart-legend-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    margin-top: 4px;
-    margin-bottom: -20px;
-
-    padding-right: 145px;
-
-    position: relative;
-    z-index: 5;
-}
-
-#toggleAllManagers {
-    color: white;
-
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
-
-    cursor: pointer;
-    user-select: none;
-}
-
-#toggleAllManagers:hover {
-    color: #00ff87;
-}

@@ -8,8 +8,6 @@ let currentData = [];
 let sortKey = "Ranking";
 let sortDirection = "asc";
 let mainChart = null;
-let allSeriesVisible = true;
-let chartManagers = [];
 
 const managerColors = {
     "Bala": "#e82210c4",
@@ -59,10 +57,6 @@ const chartDescription =
         "chartDescription"
     );
 
-const toggleAllManagers =
-    document.getElementById(
-        "toggleAllManagers"
-    );
 
 
 
@@ -452,7 +446,6 @@ function createChart(type = "overall") {
             allData.map(row => row.Name)
         )
     ];
-    chartManagers = managers;
 
     let dataKey;
 
@@ -1599,34 +1592,6 @@ chartSelect.addEventListener(
     }
 );
 
-toggleAllManagers.addEventListener(
-    "click",
-    function () {
-
-        if (allSeriesVisible) {
-
-            chartManagers.forEach(manager => {
-                mainChart.hideSeries(manager);
-            });
-
-            toggleAllManagers.textContent =
-                "Összes megjelenítése";
-
-            allSeriesVisible = false;
-
-        } else {
-
-            chartManagers.forEach(manager => {
-                mainChart.showSeries(manager);
-            });
-
-            toggleAllManagers.textContent =
-                "Összes menedzser";
-
-            allSeriesVisible = true;
-        }
-    }
-);
 
 // ==============================
 // START APPLICATION
