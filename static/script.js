@@ -9,6 +9,7 @@ let sortKey = "Ranking";
 let sortDirection = "asc";
 let mainChart = null;
 let allSeriesVisible = true;
+let chartManagers = [];
 
 const managerColors = {
     "Bala": "#e82210c4",
@@ -56,6 +57,11 @@ const chartTitle =
 const chartDescription =
     document.getElementById(
         "chartDescription"
+    );
+
+const toggleAllManagers =
+    document.getElementById(
+        "toggleAllManagers"
     );
 
 
@@ -446,6 +452,7 @@ function createChart(type = "overall") {
             allData.map(row => row.Name)
         )
     ];
+    chartManagers = managers;
 
     let dataKey;
 
@@ -638,64 +645,10 @@ function createChart(type = "overall") {
             options
         );
 
-    mainChart.render().then(() => {
-
-        addToggleAllLegendItem(managers);
-
-    });
+    mainChart.render();
 }
 
-function addToggleAllLegendItem(managers) {
 
-    const legend =
-        document.querySelector(
-            "#mainChart .apexcharts-legend"
-        );
-
-    if (!legend) {
-        return;
-    }
-
-    const toggle =
-        document.createElement("span");
-
-    toggle.className =
-        "toggle-all-managers";
-
-    toggle.textContent =
-        "Összes menedzser";
-
-    toggle.addEventListener(
-        "click",
-        function () {
-
-            if (allSeriesVisible) {
-
-                managers.forEach(manager => {
-                    mainChart.hideSeries(manager);
-                });
-
-                toggle.textContent =
-                    "Összes megjelenítése";
-
-                allSeriesVisible = false;
-
-            } else {
-
-                managers.forEach(manager => {
-                    mainChart.showSeries(manager);
-                });
-
-                toggle.textContent =
-                    "Összes menedzser";
-
-                allSeriesVisible = true;
-            }
-        }
-    );
-
-    legend.appendChild(toggle);
-}
 
 
 // ==============================
@@ -1643,6 +1596,35 @@ chartSelect.addEventListener(
     function () {
 
         createChart(this.value);
+    }
+);
+
+toggleAllManagers.addEventListener(
+    "click",
+    function () {
+
+        if (allSeriesVisible) {
+
+            chartManagers.forEach(manager => {
+                mainChart.hideSeries(manager);
+            });
+
+            toggleAllManagers.textContent =
+                "Összes megjelenítése";
+
+            allSeriesVisible = false;
+
+        } else {
+
+            chartManagers.forEach(manager => {
+                mainChart.showSeries(manager);
+            });
+
+            toggleAllManagers.textContent =
+                "Összes menedzser";
+
+            allSeriesVisible = true;
+        }
     }
 );
 
