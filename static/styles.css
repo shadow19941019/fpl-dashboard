@@ -1251,3 +1251,25 @@ body {
 .toggle-all-managers:hover {
     color: #00ff87;
 }
+
+/* ==============================
+   CHART SELECTOR
+   ============================== */
+
+/* A diagram fejléce egy sorban tartja
+   a címet és a diagramválasztót */
+.chart-header-with-filter {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* A diagramválasztó ugyanazt a custom-select
+   stílust használja, mint a GW választó,
+   csak keskenyebb szélességgel */
+.chart-select {
+    width: 210px;
+    min-width: 210px;
+    flex-shrink: 0;
+}
