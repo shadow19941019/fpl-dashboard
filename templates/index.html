@@ -82,54 +82,36 @@
 
         <!-- CHART-->
 
-        <div class="chart-card">
-
-            <div class="chart-header">
-                <div>
-                    <h3>Összpont alakulása</h3>
-
-                    <p>
-                        A menedzserek összpontszámának
-                        alakulása Gameweek-ről Gameweek-re
-                    </p>
-                </div>
-            </div>
-
-            <div id="overallPointsChart"></div>
-
-        </div>
+        <!-- CHART -->
 
         <div class="chart-card">
 
             <div class="chart-header chart-header-with-filter">
 
                 <div>
-                    <h3>GW pontok alakulása</h3>
+                    <h3 id="chartTitle">
+                        Összpont alakulása
+                    </h3>
 
-                    <p>
-                        A menedzserek Gameweek pontszámainak
-                        összehasonlítása
+                    <p id="chartDescription">
+                        A menedzserek összpontszámának
+                        alakulása Gameweek-ről Gameweek-re
                     </p>
                 </div>
 
-                <div class="chart-manager-filter">
+                <select class="form-select custom-select chart-select" id="chartSelect">
+                    <option value="overall">
+                        Összpont alakulása
+                    </option>
 
-                    <button type="button" class="chart-manager-button" id="gwPointsManagerButton">
-                        <i class="bi bi-people-fill"></i>
-
-                        Menedzserek
-
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-
-                    <div class="chart-manager-dropdown" id="gwPointsManagerDropdown">
-                    </div>
-
-                </div>
+                    <option value="gwPoints">
+                        GW pontok alakulása
+                    </option>
+                </select>
 
             </div>
 
-            <div id="gwPointsChart"></div>
+            <div id="mainChart"></div>
 
         </div>
 

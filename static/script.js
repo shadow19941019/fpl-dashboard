@@ -7,8 +7,8 @@ let currentData = [];
 
 let sortKey = "Ranking";
 let sortDirection = "asc";
-let overallPointsChart = null;
-let gwPointsChart = null;
+let mainChart = null;
+let allSeriesVisible = true;
 
 const managerColors = {
     "Bala": "#e82210c4",
@@ -47,15 +47,17 @@ const refreshButton =
 const refreshButtonText =
     document.getElementById("refreshButtonText");
 
-const gwPointsManagerButton =
+const chartSelect =
+    document.getElementById("chartSelect");
+
+const chartTitle =
+    document.getElementById("chartTitle");
+
+const chartDescription =
     document.getElementById(
-        "gwPointsManagerButton"
+        "chartDescription"
     );
 
-const gwPointsManagerDropdown =
-    document.getElementById(
-        "gwPointsManagerDropdown"
-    );
 
 
 // ==============================
@@ -102,13 +104,10 @@ function loadData() {
     // Gameweek selector létrehozása
     createGWSelect();
     createPlayerSelect();
-
-    createOverallPointsChart();
-
-    createGWPointsManagerFilter();
-    createGWPointsChart();
+    createChart("overall");
 }
 
+  
 
 // ==============================
 // CREATE GAMEWEEK SELECT
@@ -427,63 +426,10 @@ function updateSortIndicators() {
 // ==============================
 // RENDER CHART
 // ==============================
-
-function createGWPointsManagerFilter() {
-
-    const managers = [
-        ...new Set(
-            allData.map(row => row.Name)
-        )
-    ];
-
-    gwPointsManagerDropdown.innerHTML = "";
-
-    managers.forEach(manager => {
-
-        const label =
-            document.createElement("label");
-
-        label.className =
-            "chart-manager-option";
-
-        const checkbox =
-            document.createElement("input");
-
-        checkbox.type = "checkbox";
-        checkbox.className =
-            "gw-points-manager-checkbox";
-
-        checkbox.value = manager;
-        checkbox.checked = true;
-
-        const colorDot =
-            document.createElement("span");
-
-        colorDot.className =
-            "manager-color-dot";
-
-        colorDot.style.background =
-            managerColors[manager];
-
-        const name =
-            document.createElement("span");
-
-        name.textContent = manager;
-
-        label.appendChild(checkbox);
-        label.appendChild(colorDot);
-        label.appendChild(name);
-
-        gwPointsManagerDropdown.appendChild(
-            label
-        );
-    });
-}
-
-function createOverallPointsChart() {
+function createChart(type = "overall") {
 
     const chartElement =
-        document.querySelector("#overallPointsChart");
+        document.querySelector("#mainChart");
 
     if (!chartElement) {
         return;
@@ -501,29 +447,60 @@ function createOverallPointsChart() {
         )
     ];
 
+    let dataKey;
+
+    if (type === "gwPoints") {
+
+        dataKey = "GW points";
+
+        chartTitle.textContent =
+            "GW pontok alakulása";
+
+        chartDescription.textContent =
+            "A menedzserek Gameweek pontszámainak összehasonlítása";
+
+    } else {
+
+        dataKey = "Sum points up to GW";
+
+        chartTitle.textContent =
+            "Összpont alakulása";
+
+        chartDescription.textContent =
+            "A menedzserek összpontszámának alakulása Gameweek-ről Gameweek-re";
+    }
+
+
     const series = managers.map(manager => {
 
         const managerData = allData
-            .filter(row => row.Name === manager)
+            .filter(
+                row =>
+                    row.Name === manager
+            )
             .sort(
                 (a, b) =>
-                    Number(a.GW) - Number(b.GW)
+                    Number(a.GW) -
+                    Number(b.GW)
             );
 
-        const points = gameweeks.map(gw => {
+        const points =
+            gameweeks.map(gw => {
 
-            const gwData = managerData.find(
-                row => Number(row.GW) === gw
-            );
+                const gwData =
+                    managerData.find(
+                        row =>
+                            Number(row.GW) === gw
+                    );
 
-            if (!gwData) {
-                return null;
-            }
+                if (!gwData) {
+                    return null;
+                }
 
-            return Number(
-                gwData["Sum points up to GW"]
-            );
-        });
+                return Number(
+                    gwData[dataKey]
+                );
+            });
 
         return {
             name: manager,
@@ -531,185 +508,12 @@ function createOverallPointsChart() {
         };
     });
 
-    const options = {
-
-    series: series,
-
-    colors: managers.map(
-        manager => managerColors[manager]
-    ),
-
-    chart: {
-        type: "line",
-        height: 450,
-        background: "transparent",
-
-        toolbar: {
-            show: false
-        },
-
-        zoom: {
-            enabled: false
-        }
-    },
-
-    stroke: {
-        curve: "smooth",
-        width: 2.5
-    },
-
-    markers: {
-        size: 4,
-        strokeWidth: 0,
-
-        hover: {
-            size: 7
-        }
-    },
-
-    dataLabels: {
-        enabled: false
-    },
-
-    xaxis: {
-        categories: gameweeks.map(
-            gw => `GW ${gw}`
-        ),
-
-        labels: {
-            style: {
-                colors: "rgba(255,255,255,0.65)"
-            }
-        },
-
-        axisBorder: {
-            color: "rgba(255,255,255,0.08)"
-        },
-
-        axisTicks: {
-            color: "rgba(255,255,255,0.08)"
-        }
-    },
-
-    yaxis: {
-        labels: {
-            style: {
-                colors: "rgba(255,255,255,0.65)"
-            }
-        }
-    },
-
-    grid: {
-        borderColor: "rgba(255,255,255,0.08)",
-        strokeDashArray: 4
-    },
-
-    legend: {
-        position: "top",
-        horizontalAlign: "left",
-
-        labels: {
-            colors: "#ffffff"
-        },
-
-        markers: {
-            width: 10,
-            height: 10,
-            radius: 10
-        },
-
-        itemMargin: {
-            horizontal: 12,
-            vertical: 6
-        }
-    },
-
-    tooltip: {
-        theme: "dark",
-        shared: true,
-        intersect: false
-    }
-};
-
-if (overallPointsChart) {
-    overallPointsChart.destroy();
-}
-
-overallPointsChart = new ApexCharts(
-    chartElement,
-    options
-);
-
-overallPointsChart.render();
-
-}
-
-function createGWPointsChart() {
-
-    const chartElement =
-        document.querySelector("#gwPointsChart");
-
-    if (!chartElement) {
-        return;
-    }
-
-    const gameweeks = [
-        ...new Set(
-            allData.map(row => Number(row.GW))
-        )
-    ].sort((a, b) => a - b);
-
-    const selectedManagers = [
-        ...document.querySelectorAll(
-            ".gw-points-manager-checkbox:checked"
-        )
-    ].map(
-        checkbox => checkbox.value
-    );
-
-    const series =
-        selectedManagers.map(manager => {
-
-            const managerData = allData
-                .filter(
-                    row =>
-                        row.Name === manager
-                )
-                .sort(
-                    (a, b) =>
-                        Number(a.GW) -
-                        Number(b.GW)
-                );
-
-            const points =
-                gameweeks.map(gw => {
-
-                    const gwData =
-                        managerData.find(
-                            row =>
-                                Number(row.GW) === gw
-                        );
-
-                    if (!gwData) {
-                        return null;
-                    }
-
-                    return Number(
-                        gwData["GW points"]
-                    );
-                });
-
-            return {
-                name: manager,
-                data: points
-            };
-        });
 
     const options = {
 
         series: series,
 
-        colors: selectedManagers.map(
+        colors: managers.map(
             manager =>
                 managerColors[manager]
         ),
@@ -729,7 +533,11 @@ function createGWPointsChart() {
         },
 
         stroke: {
-            curve: "straight",
+            curve:
+                type === "overall"
+                    ? "smooth"
+                    : "straight",
+
             width: 2.5
         },
 
@@ -747,6 +555,7 @@ function createGWPointsChart() {
         },
 
         xaxis: {
+
             categories: gameweeks.map(
                 gw => `GW ${gw}`
             ),
@@ -754,16 +563,30 @@ function createGWPointsChart() {
             labels: {
                 style: {
                     colors:
-                        "rgba(255,255,255,0.65)"
+                        gameweeks.map(
+                            () =>
+                                "rgba(255,255,255,0.65)"
+                        )
                 }
+            },
+
+            axisBorder: {
+                color:
+                    "rgba(255,255,255,0.08)"
+            },
+
+            axisTicks: {
+                color:
+                    "rgba(255,255,255,0.08)"
             }
         },
 
         yaxis: {
             labels: {
                 style: {
-                    colors:
+                    colors: [
                         "rgba(255,255,255,0.65)"
+                    ]
                 }
             }
         },
@@ -781,6 +604,17 @@ function createGWPointsChart() {
 
             labels: {
                 colors: "#ffffff"
+            },
+
+            markers: {
+                width: 10,
+                height: 10,
+                radius: 10
+            },
+
+            itemMargin: {
+                horizontal: 8,
+                vertical: 6
             }
         },
 
@@ -791,17 +625,76 @@ function createGWPointsChart() {
         }
     };
 
-    if (gwPointsChart) {
-        gwPointsChart.destroy();
+
+    if (mainChart) {
+        mainChart.destroy();
     }
 
-    gwPointsChart =
+    allSeriesVisible = true;
+
+    mainChart =
         new ApexCharts(
             chartElement,
             options
         );
 
-    gwPointsChart.render();
+    mainChart.render().then(() => {
+
+        addToggleAllLegendItem(managers);
+
+    });
+}
+
+function addToggleAllLegendItem(managers) {
+
+    const legend =
+        document.querySelector(
+            "#mainChart .apexcharts-legend"
+        );
+
+    if (!legend) {
+        return;
+    }
+
+    const toggle =
+        document.createElement("span");
+
+    toggle.className =
+        "toggle-all-managers";
+
+    toggle.textContent =
+        "Összes menedzser";
+
+    toggle.addEventListener(
+        "click",
+        function () {
+
+            if (allSeriesVisible) {
+
+                managers.forEach(manager => {
+                    mainChart.hideSeries(manager);
+                });
+
+                toggle.textContent =
+                    "Összes megjelenítése";
+
+                allSeriesVisible = false;
+
+            } else {
+
+                managers.forEach(manager => {
+                    mainChart.showSeries(manager);
+                });
+
+                toggle.textContent =
+                    "Összes menedzser";
+
+                allSeriesVisible = true;
+            }
+        }
+    );
+
+    legend.appendChild(toggle);
 }
 
 
@@ -1745,50 +1638,11 @@ refreshButton.addEventListener(
     }
 );
 
-gwPointsManagerButton.addEventListener(
-    "click",
-    function (event) {
-
-        event.stopPropagation();
-
-        gwPointsManagerDropdown.classList.toggle(
-            "show"
-        );
-    }
-);
-
-
-gwPointsManagerDropdown.addEventListener(
+chartSelect.addEventListener(
     "change",
-    function (event) {
+    function () {
 
-        if (
-            event.target.classList.contains(
-                "gw-points-manager-checkbox"
-            )
-        ) {
-            createGWPointsChart();
-        }
-    }
-);
-
-
-document.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            !gwPointsManagerDropdown.contains(
-                event.target
-            ) &&
-            !gwPointsManagerButton.contains(
-                event.target
-            )
-        ) {
-            gwPointsManagerDropdown.classList.remove(
-                "show"
-            );
-        }
+        createChart(this.value);
     }
 );
 

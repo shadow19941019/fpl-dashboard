@@ -1232,3 +1232,22 @@ body {
 
     flex-shrink: 0;
 }
+
+.toggle-all-managers {
+    display: flex;
+    align-items: center;
+
+    margin-left: 10px;
+    padding: 0 6px;
+
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-all-managers:hover {
+    color: #00ff87;
+}
