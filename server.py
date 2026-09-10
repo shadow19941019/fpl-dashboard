@@ -572,18 +572,16 @@ def get_dashboard_data():
     # -------------------------
 
     if cache_age > CACHE_DURATION:
+        print("Cache régi → frissítés indul.")
 
-        print(
-            "Cache régi → "
-            "háttérfrissítés indul."
-        )
+        raw_data = build_raw_data()
+        data = add_calculated_stats(raw_data)
 
-        refresh_thread = threading.Thread(
-            target=refresh_dashboard_data,
-            daemon=True
-        )
+        save_cache(data)
 
-        refresh_thread.start()
+        return data
+
+    return data
 
 
     # -------------------------
