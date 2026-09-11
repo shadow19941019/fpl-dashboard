@@ -1429,7 +1429,7 @@ function renderTeam(
              TEAM LIST
              ============================== -->
 
-        <div class="col-lg-6">
+        <div class="col-lg-5">
 
             <div class="mb-4">
 
@@ -1467,15 +1467,29 @@ function renderTeam(
              MANAGER GW CHART
              ============================== -->
 
-        <div class="col-lg-6">
+        <div class="col-lg-7">
 
-            <h6 class="text-secondary mb-3">
-                GW PONTOK ALAKULÁSA
-            </h6>
+    <h6 class="text-secondary mb-3">
+        GW PONTOK ALAKULÁSA
+    </h6>
 
-            <div id="managerTeamChart"></div>
+    <div id="managerTeamChart"></div>
 
-        </div>
+
+    <hr class="my-4">
+
+
+    <!-- ==============================
+         POSITION POINTS CHART
+         ============================== -->
+
+    <h6 class="text-secondary mb-3">
+        PONTOK POSZTOK SZERINT
+    </h6>
+
+    <div id="managerPositionChart"></div>
+
+</div>
 
 
     </div>
@@ -1486,9 +1500,130 @@ function renderTeam(
 renderManagerTeamChart(
     playerName
 );
+// A GW grafikon után kirajzoljuk
+// a posztok szerinti pontmegoszlást is.
+renderManagerPositionChart(
+    playerName
+);
 
     loading.classList.add("d-none");
     content.classList.remove("d-none");
+}
+
+// ==============================
+// POSITION POINTS PIE CHART
+// ==============================
+
+function renderManagerPositionChart(
+    managerName
+) {
+
+    const chartElement =
+        document.getElementById(
+            "managerPositionChart"
+        );
+
+    if (!chartElement) {
+        return;
+    }
+
+
+    const selectedGW =
+        Number(gwSelect.value);
+
+
+    // Megkeressük a menedzser
+    // kiválasztott Gameweekjének összesített adatait.
+    const managerData =
+        allData.find(
+            row =>
+                row.Name === managerName &&
+                Number(row.GW) === selectedGW
+        );
+
+    if (!managerData) {
+        return;
+    }
+
+
+    const options = {
+
+        series: [
+            Number(
+                managerData["Total GK points"]
+            ) || 0,
+
+            Number(
+                managerData["Total DEF points"]
+            ) || 0,
+
+            Number(
+                managerData["Total MID points"]
+            ) || 0,
+
+            Number(
+                managerData["Total FWD points"]
+            ) || 0
+        ],
+
+        labels: [
+            "Kapus",
+            "Védő",
+            "Középpályás",
+            "Csatár"
+        ],
+
+        chart: {
+            type: "donut",
+            height: 300,
+            background: "transparent"
+        },
+
+
+        // A százalék közvetlenül
+        // a diagramon is megjelenik.
+        dataLabels: {
+            enabled: true,
+
+            formatter: function (value) {
+                return `${value.toFixed(1)}%`;
+            }
+        },
+
+
+        legend: {
+            position: "bottom",
+
+            labels: {
+                colors: "#ffffff"
+            }
+        },
+
+
+        tooltip: {
+            theme: "dark",
+
+            y: {
+                formatter: function (value) {
+                    return `${value} pont`;
+                }
+            }
+        },
+
+
+        stroke: {
+            width: 2
+        }
+    };
+
+
+    const positionChart =
+        new ApexCharts(
+            chartElement,
+            options
+        );
+
+    positionChart.render();
 }
 
 // ==============================

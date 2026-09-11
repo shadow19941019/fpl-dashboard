@@ -233,7 +233,35 @@ def calculate_transfer_advantage(
 
 
 def build_raw_data():
+
     rows = []
+
+    # ==============================
+    # PLAYER POSITIONS
+    # ==============================
+
+    # Egyszer lekérjük az összes FPL játékost,
+    # hogy az ID alapján tudjuk a posztjukat.
+    bootstrap_response = requests.get(
+        f"{FPL_API}/bootstrap-static/",
+        timeout=10
+    )
+
+    bootstrap_response.raise_for_status()
+
+    bootstrap_data = bootstrap_response.json()
+
+    player_positions = {
+        player["id"]: player["element_type"]
+        for player in bootstrap_data["elements"]
+    }
+
+    position_names = {
+        1: "GK",
+        2: "DEF",
+        3: "MID",
+        4: "FWD"
+    }
 
     for manager_name, entry_id in NAME_MAP.items():
 
@@ -261,6 +289,50 @@ def build_raw_data():
             live_points = get_live_points(
                 gw
             )
+
+            # -----------------------------------------
+            # POINTS BY POSITION
+            # -----------------------------------------
+
+            # Az adott Gameweek ténylegesen beszámító
+            # pontjait posztonként összegezzük.
+            position_points = {
+                "GK": 0,
+                "DEF": 0,
+                "MID": 0,
+                "FWD": 0
+            }
+
+            for pick in picks_data["picks"]:
+
+                player_id = pick["element"]
+
+                position_id = player_positions.get(
+                    player_id
+                )
+
+                position = position_names.get(
+                    position_id
+                )
+
+                if position is None:
+                    continue
+
+                player_points = live_points.get(
+                    player_id,
+                    0
+                )
+
+                # A multiplier kezeli a kapitány
+                # duplázását és a pad nullás értékét is.
+                scored_points = (
+                    player_points
+                    * pick["multiplier"]
+                )
+
+                position_points[
+                    position
+                ] += scored_points
 
             # CAPTAIN POINTS
 
@@ -319,20 +391,44 @@ def build_raw_data():
     transfer_advantage - transfer_cost
 )
 
-            rows.append({
+                        rows.append({
                 "GW": gw,
                 "Name": manager_name,
                 "GW points": gw_data["points"],
-                "Sum points up to GW": gw_data["total_points"],
-                "Captain points": captain_points,
+                "Sum points up to GW":
+                    gw_data["total_points"],
+                "Captain points":
+                    captain_points,
+
                 "Captain points/GW points [%]": (
-                    captain_points / gw_data["points"] * 100
+                    captain_points
+                    / gw_data["points"]
+                    * 100
                     if gw_data["points"] > 0
                     else 0
                 ),
-                "Transfers": gw_data["event_transfers"],
-                "Net advantage from transfer": net_transfer_advantage,
-                "Points left on bench": bench_points
+
+                "Transfers":
+                    gw_data["event_transfers"],
+
+                "Net advantage from transfer":
+                    net_transfer_advantage,
+
+                "Points left on bench":
+                    bench_points,
+
+                # Posztonkénti pontok az adott GW-ben.
+                "GW GK points":
+                    position_points["GK"],
+
+                "GW DEF points":
+                    position_points["DEF"],
+
+                "GW MID points":
+                    position_points["MID"],
+
+                "GW FWD points":
+                    position_points["FWD"]
             })
 
     return rows
@@ -353,6 +449,21 @@ def add_calculated_stats(rows):
     captain_total = {manager: 0 for manager in managers}
     total_transfers = {manager: 0 for manager in managers}
     total_transfer_advantage = {manager: 0 for manager in managers}
+    # ==============================
+    # POSITION POINT TOTALS
+    # ==============================
+
+    # Managerenként tároljuk az adott GW-ig
+    # összegyűjtött posztonkénti pontokat.
+    position_totals = {
+        manager: {
+            "GK": 0,
+            "DEF": 0,
+            "MID": 0,
+            "FWD": 0
+        }
+        for manager in managers
+    }
 
 
     for gw in gameweeks:
@@ -490,6 +601,46 @@ def add_calculated_stats(rows):
 
             row["Total transfer advantage"] = (
                 total_transfer_advantage[manager]
+            )
+            # ==============================
+            # POSITION POINT TOTALS
+            # ==============================
+
+            # Hozzáadjuk az aktuális GW
+            # posztonkénti pontjait az eddigi összeghez.
+            position_totals[manager]["GK"] += (
+                row["GW GK points"]
+            )
+
+            position_totals[manager]["DEF"] += (
+                row["GW DEF points"]
+            )
+
+            position_totals[manager]["MID"] += (
+                row["GW MID points"]
+            )
+
+            position_totals[manager]["FWD"] += (
+                row["GW FWD points"]
+            )
+
+
+            # Elmentjük az aktuális GW-ig
+            # összegzett értékeket.
+            row["Total GK points"] = (
+                position_totals[manager]["GK"]
+            )
+
+            row["Total DEF points"] = (
+                position_totals[manager]["DEF"]
+            )
+
+            row["Total MID points"] = (
+                position_totals[manager]["MID"]
+            )
+
+            row["Total FWD points"] = (
+                position_totals[manager]["FWD"]
             )
 
 
