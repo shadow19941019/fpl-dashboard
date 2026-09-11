@@ -499,6 +499,42 @@ if (type === "gwPoints") {
     chartDescription.textContent =
         "A menedzserek padon hagyott pontjai Gameweek-ről Gameweek-re";
 
+} else if (type === "transferTotal") {
+
+    // ==============================
+    // CUMULATIVE TRANSFER ADVANTAGE
+    // ==============================
+
+    // A backend már tartalmazza
+    // az addig összegzett transzfer hasznot.
+    dataKey = "Total transfer advantage";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "Kumulált transzfer haszon";
+
+    chartDescription.textContent =
+        "A menedzserek összesített transzfer hasznának alakulása";
+
+} else if (type === "transferGW") {
+
+    // ==============================
+    // GAMEWEEK TRANSFER ADVANTAGE
+    // ==============================
+
+    // Az adott Gameweek nettó transzfer
+    // hasznát jelenítjük meg.
+    dataKey = "Net advantage from transfer";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "GW transzfer haszon";
+
+    chartDescription.textContent =
+        "A menedzserek transzfer haszna Gameweek-ről Gameweek-re";
+
 } else {
 
     // Összesített FPL pontszám
@@ -594,18 +630,18 @@ const points =
             }
         },
 
-        // ==============================
 // ==============================
 // CHART LINE STYLE
 // ==============================
 
-// A Gameweekenként változó statisztikák
-// egyenes szakaszokat használnak.
-// A kumulált diagramok simított, íves vonalat kapnak.
+// A Gameweekenkénti statisztikák
+// egyenes vonalat kapnak.
+// A kumulált diagramok simítottak.
 stroke: {
     curve:
         type === "gwPoints" ||
-        type === "benchGW"
+        type === "benchGW" ||
+        type === "transferGW"
             ? "straight"
             : "smooth",
 
