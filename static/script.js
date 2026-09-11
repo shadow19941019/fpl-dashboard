@@ -847,6 +847,24 @@ if (chartType === "bar") {
         });
 }
 
+// ==============================
+// Y AXIS MAXIMUM
+// ==============================
+
+// Bar chartoknál meghatározzuk
+// a legnagyobb megjelenített értéket.
+let yAxisMax;
+
+if (type === "gwFinishes") {
+
+    const allValues =
+        series.flatMap(
+            item => item.data
+        );
+
+    yAxisMax =
+        Math.max(...allValues);
+}
 
     const options = {
 
@@ -976,10 +994,20 @@ yaxis: {
     // A legrosszabb lehetséges helyezés
     // a menedzserek száma.
     max:
-        type === "ranking" ||
-        type === "benchRanking"
-            ? managers.length
-            : undefined,
+    type === "gwFinishes"
+        ? yAxisMax
+        : (
+            type === "ranking" ||
+            type === "benchRanking"
+                ? managers.length
+                : undefined
+        ),
+    // A GW győzelmek / TOP3 diagramnál
+// csak egész lépések jelenjenek meg.
+tickAmount:
+    type === "gwFinishes"
+        ? Math.max(yAxisMax, 1)
+        : undefined,
 
     labels: {
 
@@ -1003,6 +1031,8 @@ yaxis: {
             ]
         }
     }
+    
+    
 },
 
         grid: {
