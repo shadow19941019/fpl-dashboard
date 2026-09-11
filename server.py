@@ -391,7 +391,7 @@ def build_raw_data():
     transfer_advantage - transfer_cost
 )
 
-                        rows.append({
+            rows.append({
                 "GW": gw,
                 "Name": manager_name,
                 "GW points": gw_data["points"],
