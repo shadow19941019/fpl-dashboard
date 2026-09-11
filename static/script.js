@@ -956,11 +956,30 @@ colors:
 
 yaxis: {
 
-    // Helyezés típusú diagramoknál
-// az 1. hely jelenjen meg legfelül.
-reversed:
-    type === "ranking" ||
-    type === "benchRanking",
+    // ==============================
+    // RANKING AXIS
+    // ==============================
+
+    // Helyezésnél az 1. hely van felül,
+    // az utolsó hely pedig legalul.
+    reversed:
+        type === "ranking" ||
+        type === "benchRanking",
+
+    // Helyezésdiagramnál nincs 0. hely.
+    min:
+        type === "ranking" ||
+        type === "benchRanking"
+            ? 1
+            : undefined,
+
+    // A legrosszabb lehetséges helyezés
+    // a menedzserek száma.
+    max:
+        type === "ranking" ||
+        type === "benchRanking"
+            ? managers.length
+            : undefined,
 
     labels: {
 
