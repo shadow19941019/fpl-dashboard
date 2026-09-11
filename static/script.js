@@ -8,6 +8,9 @@ let currentData = [];
 let sortKey = "Ranking";
 let sortDirection = "asc";
 let mainChart = null;
+// A megnyitott menedzser saját
+// Gameweek diagramját tárolja.
+let managerTeamChart = null;
 
 const managerColors = {
     "Bala": "#e82210c4",
@@ -1366,7 +1369,12 @@ modal.show();
         }
 
 
-        renderTeam(data);
+        // A csapatadatok mellett a menedzser nevét is
+// átadjuk, hogy elkészíthessük a saját diagramját.
+renderTeam(
+    data,
+    playerName
+);
 
 
     } catch (error) {
@@ -1380,7 +1388,10 @@ modal.show();
     }
 }
 
-function renderTeam(data) {
+function renderTeam(
+    data,
+    playerName
+) {
 
     const loading =
         document.getElementById(
@@ -1405,42 +1416,261 @@ function renderTeam(data) {
         );
 
 
-    content.innerHTML = `
+  content.innerHTML = `
 
-        <div class="mb-4">
+    <!-- ==============================
+         TEAM + MANAGER CHART LAYOUT
+         ============================== -->
 
-            <h6 class="text-secondary">
-                KEZDŐ
-            </h6>
+    <div class="row g-4">
 
-            ${starters.map(player => {
 
-                return createPlayerRow(player);
+        <!-- ==============================
+             TEAM LIST
+             ============================== -->
 
-            }).join("")}
+        <div class="col-lg-6">
+
+            <div class="mb-4">
+
+                <h6 class="text-secondary">
+                    KEZDŐ
+                </h6>
+
+                ${starters.map(player => {
+
+                    return createPlayerRow(player);
+
+                }).join("")}
+
+            </div>
+
+
+            <div>
+
+                <h6 class="text-secondary">
+                    CSEREPAD
+                </h6>
+
+                ${bench.map(player => {
+
+                    return createPlayerRow(player);
+
+                }).join("")}
+
+            </div>
 
         </div>
 
 
-        <div>
+        <!-- ==============================
+             MANAGER GW CHART
+             ============================== -->
 
-            <h6 class="text-secondary">
-                CSEREPAD
+        <div class="col-lg-6">
+
+            <h6 class="text-secondary mb-3">
+                GW PONTOK ALAKULÁSA
             </h6>
 
-            ${bench.map(player => {
-
-                return createPlayerRow(player);
-
-            }).join("")}
+            <div id="managerTeamChart"></div>
 
         </div>
 
-    `;
 
+    </div>
+
+`;
+// A csapatlista létrehozása után
+// kirajzoljuk a menedzser GW diagramját.
+renderManagerTeamChart(
+    playerName
+);
 
     loading.classList.add("d-none");
     content.classList.remove("d-none");
+}
+
+// ==============================
+// MANAGER TEAM CHART
+// ==============================
+
+function renderManagerTeamChart(
+    managerName
+) {
+
+    const chartElement =
+        document.getElementById(
+            "managerTeamChart"
+        );
+
+    if (!chartElement) {
+        return;
+    }
+
+
+    // Csak az éppen kiválasztott Gameweekig
+    // mutatjuk a menedzser szezonját.
+    const selectedGW =
+        Number(gwSelect.value);
+
+    const managerHistory =
+        allData
+            .filter(
+                row =>
+                    row.Name === managerName &&
+                    Number(row.GW) <= selectedGW
+            )
+            .sort(
+                (a, b) =>
+                    Number(a.GW) -
+                    Number(b.GW)
+            );
+
+
+    // Ha korábban már nyitottunk meg
+    // egy menedzsert, töröljük a régi chartot.
+    if (managerTeamChart) {
+
+        managerTeamChart.destroy();
+
+        managerTeamChart = null;
+    }
+
+
+    const options = {
+
+        series: [
+            {
+                name: "GW pont",
+                data:
+                    managerHistory.map(
+                        row =>
+                            Number(
+                                row["GW points"]
+                            ) || 0
+                    )
+            }
+        ],
+
+        chart: {
+            type: "line",
+            height: 230,
+            background: "transparent",
+
+            toolbar: {
+                show: false
+            },
+
+            zoom: {
+                enabled: false
+            }
+        },
+
+
+        // A menedzser ugyanazt a színt kapja,
+        // mint a fő diagramokon.
+        colors: [
+            managerColors[managerName]
+        ],
+
+
+        stroke: {
+            curve: "straight",
+            width: 3
+        },
+
+
+        markers: {
+            size: 5,
+            strokeWidth: 0,
+
+            hover: {
+                size: 7
+            }
+        },
+
+
+        dataLabels: {
+            enabled: false
+        },
+
+
+        xaxis: {
+
+            categories:
+                managerHistory.map(
+                    row =>
+                        `GW ${row.GW}`
+                ),
+
+            labels: {
+                style: {
+                    colors:
+                        managerHistory.map(
+                            () =>
+                                "rgba(255,255,255,0.65)"
+                        )
+                }
+            },
+
+            axisBorder: {
+                color:
+                    "rgba(255,255,255,0.08)"
+            },
+
+            axisTicks: {
+                color:
+                    "rgba(255,255,255,0.08)"
+            }
+        },
+
+
+        yaxis: {
+
+            labels: {
+
+                formatter: function (value) {
+                    return Math.round(value);
+                },
+
+                style: {
+                    colors: [
+                        "rgba(255,255,255,0.65)"
+                    ]
+                }
+            }
+        },
+
+
+        grid: {
+            borderColor:
+                "rgba(255,255,255,0.08)",
+
+            strokeDashArray: 4
+        },
+
+
+        legend: {
+            show: false
+        },
+
+
+        tooltip: {
+            theme: "dark"
+        }
+    };
+
+
+    // Létrehozzuk és megjelenítjük
+    // a menedzser saját diagramját.
+    managerTeamChart =
+        new ApexCharts(
+            chartElement,
+            options
+        );
+
+    managerTeamChart.render();
 }
 
 function createPlayerRow(player) {
