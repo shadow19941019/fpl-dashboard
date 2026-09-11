@@ -581,18 +581,39 @@ const points =
         ),
 
         chart: {
-            type: "line",
-            height: 450,
-            background: "transparent",
+    type: "line",
+    height: 450,
+    background: "transparent",
 
-            toolbar: {
-                show: false
-            },
+    toolbar: {
+        show: false
+    },
 
-            zoom: {
-                enabled: false
-            }
-        },
+    zoom: {
+        enabled: false
+    },
+
+    // ==============================
+    // CLICK ON CHART POINT
+    // ==============================
+
+    // Ha valamelyik adatpontra kattintunk,
+    // megjelenítjük az adott GW összes értékét.
+    events: {
+        markerClick: function (
+            event,
+            chartContext,
+            config
+        ) {
+            showChartClickTooltip(
+                event,
+                config.dataPointIndex,
+                gameweeks,
+                series
+            );
+        }
+    }
+},
 
         // ==============================
 // ==============================
@@ -689,11 +710,15 @@ stroke: {
             }
         },
 
-        tooltip: {
-            theme: "dark",
-            shared: true,
-            intersect: false
-        }
+        // ==============================
+// TOOLTIP
+// ==============================
+
+// A beépített hover tooltipot kikapcsoljuk,
+// mert az adatokat csak kattintásra mutatjuk.
+tooltip: {
+    enabled: false
+},
     };
 
 
@@ -708,6 +733,83 @@ stroke: {
         );
 
     mainChart.render();
+}
+
+// ==============================
+// CLICK TOOLTIP
+// ==============================
+
+function showChartClickTooltip(
+    event,
+    dataPointIndex,
+    gameweeks,
+    series
+) {
+
+    // Ha nem érvényes adatpontra kattintottunk,
+    // nem jelenítünk meg semmit.
+    if (dataPointIndex < 0) {
+        return;
+    }
+
+    let tooltip =
+        document.getElementById(
+            "chartClickTooltip"
+        );
+
+    // Első kattintáskor létrehozzuk
+    // a saját tooltip elemünket.
+    if (!tooltip) {
+
+        tooltip =
+            document.createElement("div");
+
+        tooltip.id =
+            "chartClickTooltip";
+
+        tooltip.className =
+            "chart-click-tooltip";
+
+        document
+            .querySelector(".chart-card")
+            .appendChild(tooltip);
+    }
+
+    const gw =
+        gameweeks[dataPointIndex];
+
+    // Az adott GW minden menedzserének
+    // értékét összeállítjuk.
+    const rows =
+        series.map(item => {
+
+            const value =
+                item.data[dataPointIndex];
+
+            return `
+                <div class="chart-tooltip-row">
+                    <span>${item.name}</span>
+                    <strong>${value ?? "-"}</strong>
+                </div>
+            `;
+        }).join("");
+
+    tooltip.innerHTML = `
+        <div class="chart-tooltip-title">
+            Gameweek ${gw}
+        </div>
+
+        ${rows}
+    `;
+
+    // A tooltip a kattintás közelében jelenik meg.
+    tooltip.style.left =
+        `${event.offsetX + 15}px`;
+
+    tooltip.style.top =
+        `${event.offsetY + 15}px`;
+
+    tooltip.classList.add("show");
 }
 
 
