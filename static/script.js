@@ -471,7 +471,27 @@ if (type === "gwPoints") {
     chartDescription.textContent =
         "A menedzserek Gameweek pontszámainak összehasonlítása";
 
-} else if (type === "benchTotal") {
+} else if (type === "benchTotal") 
+    } else if (type === "benchGW") {
+
+    // ==============================
+    // GAMEWEEK BENCH POINTS
+    // ==============================
+
+    // Az adott Gameweekben padon hagyott
+    // pontokat jelenítjük meg, összeadás nélkül
+    dataKey = "Points left on bench";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "GW padon hagyott pontok";
+
+    chartDescription.textContent =
+        "A menedzserek padon hagyott pontjai Gameweek-ről Gameweek-re";
+
+} else {
+    {
 
     // Heti padon hagyott pontokat használunk,
     // majd ezeket lent kumuláljuk
@@ -580,14 +600,23 @@ const points =
             }
         },
 
-        stroke: {
-            curve:
-                type === "overall"
-                    ? "smooth"
-                    : "straight",
+        // ==============================
+// ==============================
+// CHART LINE STYLE
+// ==============================
 
-            width: 2.5
-        },
+// A Gameweekenként változó statisztikák
+// egyenes szakaszokat használnak.
+// A kumulált diagramok simított, íves vonalat kapnak.
+stroke: {
+    curve:
+        type === "gwPoints" ||
+        type === "benchGW"
+            ? "straight"
+            : "smooth",
+
+    width: 2.5
+},
 
         markers: {
             size: 4,
