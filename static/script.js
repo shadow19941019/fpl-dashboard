@@ -448,16 +448,18 @@ function createChart(type = "overall") {
     ];
 
 // ==============================
-// CHART TYPE SETTINGS
+// CHART SETTINGS
 // ==============================
 
-// Megadjuk, hogy a kiválasztott diagram
-// melyik adatmezőt használja
 let dataKey;
 
-// Jelzi, ha a diagramhoz
-// kumulált értéket kell számolni
+// Jelzi, ha az értékeket nekünk
+// kell Gameweekenként összegezni.
 let cumulative = false;
+
+// Alapértelmezésben vonaldiagramot használunk.
+// Egyes statisztikáknál ezt bar chartra váltjuk.
+let chartType = "line";
 
 
 if (type === "gwPoints") {
@@ -590,6 +592,100 @@ if (type === "gwPoints") {
     chartDescription.textContent =
         "A kapitánypontok részesedése az addig megszerzett teljes pontszámból";
 
+} else if (type === "ranking") {
+
+    // ==============================
+    // OVERALL RANKING
+    // ==============================
+
+    // Az adott GW végén elfoglalt
+    // összesített ligahelyezést jelenítjük meg.
+    dataKey = "Ranking";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "Helyezés alakulása";
+
+    chartDescription.textContent =
+        "A menedzserek összesített ligahelyezésének alakulása Gameweek-ről Gameweek-re";
+
+} else if (type === "benchRanking") {
+
+    // ==============================
+    // TOTAL BENCH RANKING
+    // ==============================
+
+    // Az adott GW végén elfoglalt
+    // összesített pad-helyezés.
+    dataKey = "Total Bench Ranking";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "Összesített pad-helyezés alakulása";
+
+    chartDescription.textContent =
+        "A menedzserek padon hagyott pontok alapján számított helyezésének alakulása";
+
+} else if (type === "averageGW") {
+
+    // ==============================
+    // AVERAGE GAMEWEEK POINTS
+    // ==============================
+
+    dataKey = "Average GW points";
+
+    cumulative = false;
+
+    // Ennél a statisztikánál
+    // oszlopdiagramot használunk.
+    chartType = "bar";
+
+    chartTitle.textContent =
+        "Átlag GW pont";
+
+    chartDescription.textContent =
+        "A menedzserek átlagos Gameweek pontszámának összehasonlítása";
+
+} else if (type === "gwFinishes") {
+
+    // ==============================
+    // GW WINS AND TOP 3 FINISHES
+    // ==============================
+
+    // Két külön adatmezőt fogunk
+    // egy diagramon megjeleníteni.
+    dataKey = null;
+
+    cumulative = false;
+
+    chartType = "bar";
+
+    chartTitle.textContent =
+        "GW győzelmek és TOP3 helyezések";
+
+    chartDescription.textContent =
+        "A Gameweek-győzelmek és TOP3 helyezések száma menedzserenként";
+
+} else if (type === "totalTransfers") {
+
+    // ==============================
+    // TOTAL TRANSFERS
+    // ==============================
+
+    dataKey = "Total transfers";
+
+    cumulative = false;
+
+    chartType = "bar";
+
+    chartTitle.textContent =
+        "Transzferek száma";
+
+    chartDescription.textContent =
+        "A menedzserek által végrehajtott összes transzfer száma";
+
 } else {
 
     // Összesített FPL pontszám
@@ -603,76 +699,173 @@ if (type === "gwPoints") {
 }
 
 
-    const series = managers.map(manager => {
-
-        const managerData = allData
-            .filter(
-                row =>
-                    row.Name === manager
-            )
-            .sort(
-                (a, b) =>
-                    Number(a.GW) -
-                    Number(b.GW)
-            );
-
-        // ==============================
+// ==============================
 // CHART DATA BUILDING
 // ==============================
 
-// Minden Gameweekhez kiszámítjuk
-// a diagramon megjelenő értéket
-let runningTotal = 0;
+let series;
+let categories;
 
-const points =
-    gameweeks.map(gw => {
 
-        const gwData =
-            managerData.find(
-                row =>
-                    Number(row.GW) === gw
-            );
+// Bar chartoknál minden menedzserhez
+// a legfrissebb Gameweek összesített adatát használjuk.
+if (chartType === "bar") {
 
-        if (!gwData) {
-            return null;
-        }
+    categories = managers;
 
-        const value =
-            Number(gwData[dataKey]) || 0;
+    const latestManagerData =
+        managers.map(manager => {
 
-        // Kumulált diagram esetén
-        // hozzáadjuk az aktuális GW értékét
-        // az eddigi összeghez
-        if (cumulative) {
+            const managerData = allData
+                .filter(
+                    row =>
+                        row.Name === manager
+                )
+                .sort(
+                    (a, b) =>
+                        Number(a.GW) -
+                        Number(b.GW)
+                );
 
-            runningTotal += value;
+            // A legutolsó Gameweek sora
+            // tartalmazza az aktuális szezonösszesítést.
+            return managerData[
+                managerData.length - 1
+            ];
+        });
 
-            return runningTotal;
-        }
 
-        // Normál diagram esetén
-        // csak az aktuális GW értékét adjuk vissza
-        return value;
-    });
+    if (type === "gwFinishes") {
 
-        return {
-            name: manager,
-            data: points
-        };
-    });
+        // Egy menedzserhez két oszlop tartozik:
+        // GW győzelmek és TOP3 helyezések.
+        series = [
+            {
+                name: "GW győzelmek",
+                data:
+                    latestManagerData.map(
+                        row =>
+                            Number(
+                                row?.["Number of GW wins"]
+                            ) || 0
+                    )
+            },
+            {
+                name: "TOP3 helyezések",
+                data:
+                    latestManagerData.map(
+                        row =>
+                            Number(
+                                row?.["Number of GW TOP3"]
+                            ) || 0
+                    )
+            }
+        ];
+
+    } else {
+
+        // Az egyszerű bar chartoknál
+        // minden menedzserhez egy érték tartozik.
+        series = [
+            {
+                name: chartTitle.textContent,
+
+                data:
+                    latestManagerData.map(
+                        row =>
+                            Number(
+                                row?.[dataKey]
+                            ) || 0
+                    )
+            }
+        ];
+    }
+
+} else {
+
+    // ==============================
+    // LINE CHART DATA
+    // ==============================
+
+    // A vonaldiagramoknál az X tengely
+    // továbbra is a Gameweekeket mutatja.
+    categories =
+        gameweeks.map(
+            gw => `GW ${gw}`
+        );
+
+    series =
+        managers.map(manager => {
+
+            const managerData = allData
+                .filter(
+                    row =>
+                        row.Name === manager
+                )
+                .sort(
+                    (a, b) =>
+                        Number(a.GW) -
+                        Number(b.GW)
+                );
+
+            let runningTotal = 0;
+
+            const points =
+                gameweeks.map(gw => {
+
+                    const gwData =
+                        managerData.find(
+                            row =>
+                                Number(row.GW) === gw
+                        );
+
+                    if (!gwData) {
+                        return null;
+                    }
+
+                    const value =
+                        Number(
+                            gwData[dataKey]
+                        ) || 0;
+
+                    // Csak azoknál a diagramoknál
+                    // összegezzük, ahol erre szükség van.
+                    if (cumulative) {
+
+                        runningTotal += value;
+
+                        return runningTotal;
+                    }
+
+                    return value;
+                });
+
+            return {
+                name: manager,
+                data: points
+            };
+        });
+}
 
 
     const options = {
 
         series: series,
 
-        colors: managers.map(
+        // A line chartokon és az egysoros
+// bar chartokon a menedzserek saját színeit használjuk.
+colors:
+    type === "gwFinishes"
+        ? undefined
+        : managers.map(
             manager =>
                 managerColors[manager]
         ),
 
-        chart: {
-            type: "line",
+chart: {
+    // A kiválasztott statisztikától függően
+    // line vagy bar chart jelenik meg.
+    type: chartType,
             height: 450,
             background: "transparent",
 
@@ -720,17 +913,21 @@ stroke: {
 
         xaxis: {
 
-            categories: gameweeks.map(
-                gw => `GW ${gw}`
-            ),
+            // Line chartnál Gameweekek,
+// bar chartnál menedzsernevek.
+categories: categories,
 
             labels: {
                 style: {
-                    colors:
-                        gameweeks.map(
-                            () =>
-                                "rgba(255,255,255,0.65)"
-                        )
+                    // A line chartokon és az egysoros
+// bar chartokon a menedzserek saját színeit használjuk.
+colors:
+    type === "gwFinishes"
+        ? undefined
+        : managers.map(
+            manager =>
+                managerColors[manager]
+        ),
                 }
             },
 
@@ -753,7 +950,18 @@ stroke: {
 // Y AXIS
 // ==============================
 
+// ==============================
+// Y AXIS
+// ==============================
+
 yaxis: {
+
+    // Helyezés típusú diagramoknál
+// az 1. hely jelenjen meg legfelül.
+reversed:
+    type === "ranking" ||
+    type === "benchRanking",
+
     labels: {
 
         // A százalékos diagramoknál
@@ -805,11 +1013,41 @@ yaxis: {
             }
         },
 
-        tooltip: {
-            theme: "dark",
-            shared: true,
-            intersect: false
-        }
+        // ==============================
+// TOOLTIP
+// ==============================
+
+tooltip: {
+    theme: "dark",
+    shared: true,
+    intersect: false
+},
+
+// ==============================
+// BAR CHART SETTINGS
+// ==============================
+
+plotOptions: {
+    bar: {
+
+        // A menedzserek függőleges
+        // oszlopokként jelennek meg.
+        horizontal: false,
+
+        borderRadius: 5,
+
+        columnWidth:
+            type === "gwFinishes"
+                ? "65%"
+                : "50%",
+
+        // Az egysoros bar chartoknál
+        // minden menedzser saját színt kap.
+        distributed:
+            chartType === "bar" &&
+            type !== "gwFinishes"
+    }
+}
     };
 
 
