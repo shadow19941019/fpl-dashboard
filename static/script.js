@@ -535,6 +535,61 @@ if (type === "gwPoints") {
     chartDescription.textContent =
         "A menedzserek transzfer haszna Gameweek-ről Gameweek-re";
 
+        } else if (type === "captainPoints") {
+
+    // ==============================
+    // CAPTAIN POINTS
+    // ==============================
+
+    // Az adott Gameweekben megszerzett
+    // kapitánypontokat jelenítjük meg.
+    dataKey = "Captain points";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "Kapitánypontok GW-nként";
+
+    chartDescription.textContent =
+        "A menedzserek kapitányai által szerzett pontok Gameweek-ről Gameweek-re";
+
+} else if (type === "captainPercent") {
+
+    // ==============================
+    // CAPTAIN POINT PERCENTAGE
+    // ==============================
+
+    // Megmutatjuk, hogy az adott GW teljes
+    // pontszámának hány százalékát adta a kapitány.
+    dataKey = "Captain points/GW points [%]";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "Kapitány részesedése a GW pontból";
+
+    chartDescription.textContent =
+        "A kapitánypontok aránya az adott Gameweek teljes pontszámához képest";
+
+        } else if (type === "captainTotalPercent") {
+
+    // ==============================
+    // TOTAL CAPTAIN POINT PERCENTAGE
+    // ==============================
+
+    // Megmutatjuk, hogy az adott GW-ig megszerzett
+    // összpont hány százalékát adták a kapitánypontok.
+    dataKey =
+        "Captain points/total points [%]";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "Kapitánypontok aránya az összpontból";
+
+    chartDescription.textContent =
+        "A kapitánypontok részesedése az addig megszerzett teljes pontszámból";
+
 } else {
 
     // Összesített FPL pontszám
@@ -635,13 +690,15 @@ const points =
 // ==============================
 
 // A Gameweekenkénti statisztikák
-// egyenes vonalat kapnak.
+// egyenes szakaszokat használnak.
 // A kumulált diagramok simítottak.
 stroke: {
     curve:
         type === "gwPoints" ||
         type === "benchGW" ||
-        type === "transferGW"
+        type === "transferGW" ||
+        type === "captainPoints" ||
+        type === "captainPercent"
             ? "straight"
             : "smooth",
 
@@ -688,15 +745,38 @@ stroke: {
             }
         },
 
-        yaxis: {
-            labels: {
-                style: {
-                    colors: [
-                        "rgba(255,255,255,0.65)"
-                    ]
-                }
+        // ==============================
+// Y AXIS
+// ==============================
+
+// ==============================
+// Y AXIS
+// ==============================
+
+yaxis: {
+    labels: {
+
+        // A százalékos diagramoknál
+        // százalékjelet jelenítünk meg.
+        formatter: function (value) {
+
+            if (
+                type === "captainPercent" ||
+                type === "captainTotalPercent"
+            ) {
+                return `${value.toFixed(1)}%`;
             }
+
+            return Math.round(value);
         },
+
+        style: {
+            colors: [
+                "rgba(255,255,255,0.65)"
+            ]
+        }
+    }
+},
 
         grid: {
             borderColor:
