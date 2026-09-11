@@ -898,24 +898,15 @@ chart: {
                 enabled: false
             }
         },
-
+.
 // ==============================
 // CHART LINE STYLE
 // ==============================
 
-// A Gameweekenkénti statisztikák
-// egyenes szakaszokat használnak.
-// A kumulált diagramok simítottak.
+// Minden vonaldiagram egyenes
+// szakaszokkal köti össze a pontokat.
 stroke: {
-    curve:
-        type === "gwPoints" ||
-        type === "benchGW" ||
-        type === "transferGW" ||
-        type === "captainPoints" ||
-        type === "captainPercent"
-            ? "straight"
-            : "smooth",
-
+    curve: "straight",
     width: 2.5
 },
 
