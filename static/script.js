@@ -447,28 +447,55 @@ function createChart(type = "overall") {
         )
     ];
 
-    let dataKey;
+    // ==============================
+// CHART TYPE SETTINGS
+// ==============================
 
-    if (type === "gwPoints") {
+// Megadjuk, hogy a kiválasztott diagram
+// melyik adatmezőt használja
+let dataKey;
 
-        dataKey = "GW points";
+// Jelzi, ha a diagramhoz
+// kumulált értéket kell számolni
+let cumulative = false;
 
-        chartTitle.textContent =
-            "GW pontok alakulása";
 
-        chartDescription.textContent =
-            "A menedzserek Gameweek pontszámainak összehasonlítása";
+if (type === "gwPoints") {
 
-    } else {
+    // Heti pontszámok
+    dataKey = "GW points";
 
-        dataKey = "Sum points up to GW";
+    chartTitle.textContent =
+        "GW pontok alakulása";
 
-        chartTitle.textContent =
-            "Összpont alakulása";
+    chartDescription.textContent =
+        "A menedzserek Gameweek pontszámainak összehasonlítása";
 
-        chartDescription.textContent =
-            "A menedzserek összpontszámának alakulása Gameweek-ről Gameweek-re";
-    }
+} else if (type === "benchTotal") {
+
+    // Heti padon hagyott pontokat használunk,
+    // majd ezeket lent kumuláljuk
+    dataKey = "Points left on bench";
+
+    cumulative = true;
+
+    chartTitle.textContent =
+        "Kumulált padon hagyott pontok";
+
+    chartDescription.textContent =
+        "A menedzserek összesített padon hagyott pontjainak alakulása";
+
+} else {
+
+    // Összesített FPL pontszám
+    dataKey = "Sum points up to GW";
+
+    chartTitle.textContent =
+        "Összpont alakulása";
+
+    chartDescription.textContent =
+        "A menedzserek összpontszámának alakulása Gameweek-ről Gameweek-re";
+}
 
 
     const series = managers.map(manager => {
@@ -484,23 +511,44 @@ function createChart(type = "overall") {
                     Number(b.GW)
             );
 
-        const points =
-            gameweeks.map(gw => {
+        // ==============================
+// CHART DATA BUILDING
+// ==============================
 
-                const gwData =
-                    managerData.find(
-                        row =>
-                            Number(row.GW) === gw
-                    );
+// Minden Gameweekhez kiszámítjuk
+// a diagramon megjelenő értéket
+let runningTotal = 0;
 
-                if (!gwData) {
-                    return null;
-                }
+const points =
+    gameweeks.map(gw => {
 
-                return Number(
-                    gwData[dataKey]
-                );
-            });
+        const gwData =
+            managerData.find(
+                row =>
+                    Number(row.GW) === gw
+            );
+
+        if (!gwData) {
+            return null;
+        }
+
+        const value =
+            Number(gwData[dataKey]) || 0;
+
+        // Kumulált diagram esetén
+        // hozzáadjuk az aktuális GW értékét
+        // az eddigi összeghez
+        if (cumulative) {
+
+            runningTotal += value;
+
+            return runningTotal;
+        }
+
+        // Normál diagram esetén
+        // csak az aktuális GW értékét adjuk vissza
+        return value;
+    });
 
         return {
             name: manager,
