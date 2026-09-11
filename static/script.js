@@ -447,7 +447,7 @@ function createChart(type = "overall") {
         )
     ];
 
-    // ==============================
+// ==============================
 // CHART TYPE SETTINGS
 // ==============================
 
@@ -462,7 +462,7 @@ let cumulative = false;
 
 if (type === "gwPoints") {
 
-    // Heti pontszámok
+    // Heti FPL pontszámok
     dataKey = "GW points";
 
     chartTitle.textContent =
@@ -471,27 +471,7 @@ if (type === "gwPoints") {
     chartDescription.textContent =
         "A menedzserek Gameweek pontszámainak összehasonlítása";
 
-} else if (type === "benchTotal") 
-    } else if (type === "benchGW") {
-
-    // ==============================
-    // GAMEWEEK BENCH POINTS
-    // ==============================
-
-    // Az adott Gameweekben padon hagyott
-    // pontokat jelenítjük meg, összeadás nélkül
-    dataKey = "Points left on bench";
-
-    cumulative = false;
-
-    chartTitle.textContent =
-        "GW padon hagyott pontok";
-
-    chartDescription.textContent =
-        "A menedzserek padon hagyott pontjai Gameweek-ről Gameweek-re";
-
-} else {
-    {
+} else if (type === "benchTotal") {
 
     // Heti padon hagyott pontokat használunk,
     // majd ezeket lent kumuláljuk
@@ -504,6 +484,20 @@ if (type === "gwPoints") {
 
     chartDescription.textContent =
         "A menedzserek összesített padon hagyott pontjainak alakulása";
+
+} else if (type === "benchGW") {
+
+    // Az adott Gameweekben padon hagyott
+    // pontokat jelenítjük meg, összeadás nélkül
+    dataKey = "Points left on bench";
+
+    cumulative = false;
+
+    chartTitle.textContent =
+        "GW padon hagyott pontok";
+
+    chartDescription.textContent =
+        "A menedzserek padon hagyott pontjai Gameweek-ről Gameweek-re";
 
 } else {
 
@@ -706,8 +700,6 @@ stroke: {
     if (mainChart) {
         mainChart.destroy();
     }
-
-    allSeriesVisible = true;
 
     mainChart =
         new ApexCharts(
